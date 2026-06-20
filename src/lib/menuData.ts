@@ -35,7 +35,7 @@ export const menuDetails = {
   },
   menupasta: {
     title: 'Pasta',
-    image: '/menudesigns/menupasta.svg',
+    image: '/menudesigns/mainmenu.svg',
     description: 'Handmade pastas with rich sauces and fresh ingredients.',
     items: [
       { name: 'Truffle Tagliatelle', description: 'Silky ribbons with truffle cream and parmesan.', price: '$21' },
@@ -76,7 +76,7 @@ export const menuDetails = {
   },
   steak: {
     title: 'Steak',
-    image: '/menudesigns/steak.svg',
+    image: '/menudesigns/specialsteak.svg',
     description: 'Classic steakhouse favorites, cooked to your liking.',
     items: [
       { name: 'Sirloin', description: 'Lean, flavorful sirloin with fries and salad.', price: '$27' },
@@ -116,7 +116,7 @@ export const menuDetails = {
   },
   'even-more': {
     title: 'Even More',
-    image: '/menudesigns/even-more.svg',
+    image: '/menudesigns/more-cocktail.svg',
     description: 'Discover more culinary delights and seasonal specials.',
     items: [
       { name: "Chef's Tasting Menu", description: 'A changing multi-course selection from the kitchen.', price: '$65' },

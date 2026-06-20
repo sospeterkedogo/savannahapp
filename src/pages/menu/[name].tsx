@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { FormEvent, useEffect, useState } from 'react';
 import { fetchMenuCategories, fetchPublicMenuItems } from '../../lib/menuItems';
@@ -103,7 +104,7 @@ export default function MenuDetail() {
   if (loading) {
     return (
       <main className="min-h-screen flex flex-col items-center justify-center bg-black pb-16 pt-8">
-        <div className="animate-pulse text-luxury-accent text-2xl font-serif uppercase tracking-widest">Preparing {slug}...</div>
+        <p className="animate-pulse text-luxury-accent text-2xl font-serif uppercase tracking-widest" role="status" aria-live="polite">Preparing {slug}...</p>
       </main>
     );
   }
@@ -132,8 +133,10 @@ export default function MenuDetail() {
             </div>
             
             <div className="flex-1 max-w-md relative">
+              <label htmlFor="menu-detail-search" className="sr-only">Search in {category?.title}</label>
               <input
-                type="text"
+                id="menu-detail-search"
+                type="search"
                 placeholder={`Search in ${category?.title}...`}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -156,7 +159,19 @@ export default function MenuDetail() {
           {filteredItems.length > 0 ? (
             <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
               {filteredItems.map((item) => (
-                <article key={item.name} className="rounded-2xl border border-luxury-accent/25 bg-black/60 p-5 shadow-xl">
+                <article key={item.id || item.name} className="rounded-2xl border border-luxury-accent/25 bg-black/60 p-5 shadow-xl">
+                  {item.image_url ? (
+                    <div className="relative mb-4 aspect-[16/10] overflow-hidden rounded-xl border border-luxury-accent/20">
+                      <Image
+                        src={item.image_url}
+                        alt=""
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                        unoptimized={item.image_url.startsWith('http')}
+                      />
+                    </div>
+                  ) : null}
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <h3 className="text-2xl font-serif font-semibold text-luxury-accent">{item.name}</h3>

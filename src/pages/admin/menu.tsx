@@ -14,6 +14,8 @@ import {
   deleteMenuCategory,
 } from '../../lib/menuItems';
 import type { AdminMenuFormState, DbMenuItem, MenuItemInput, DbMenuCategory, MenuCategoryInput } from '../../types/app';
+import MenuImageUpload from '../../components/admin/MenuImageUpload';
+import { validateMenuImages } from '../../lib/menuImages';
 
 export const getServerSideProps: GetServerSideProps = async () => {
   return { props: {} };
@@ -28,6 +30,8 @@ const emptyForm: AdminMenuFormState = {
   price: '',
   sort_order: '10',
   is_available: true,
+  image_url: '',
+  image_url_2: '',
 };
 
 const emptyCategoryForm: MenuCategoryInput & { id: string } = {
@@ -52,6 +56,8 @@ function itemToForm(item: DbMenuItem): AdminMenuFormState {
     price: item.price,
     sort_order: String(item.sort_order),
     is_available: item.is_available,
+    image_url: item.image_url || '',
+    image_url_2: item.image_url_2 || '',
   };
 }
 
@@ -64,6 +70,8 @@ function formToInput(form: AdminMenuFormState): MenuItemInput {
     price: form.price.trim(),
     sort_order: Number(form.sort_order) || 0,
     is_available: form.is_available,
+    image_url: form.image_url.trim(),
+    image_url_2: form.image_url_2.trim(),
   };
 }
 
@@ -124,6 +132,12 @@ export default function AdminMenu() {
     setError('');
 
     try {
+      const imageError = validateMenuImages(form.image_url, form.image_url_2);
+      if (imageError) {
+        setError(imageError);
+        return;
+      }
+
       if (form.id) {
         await updateMenuItem(form.id, formToInput(form));
         setMessage('Menu item updated.');
@@ -284,8 +298,15 @@ export default function AdminMenu() {
                   Available on public menu
                 </label>
 
+                <MenuImageUpload
+                  imageUrl={form.image_url}
+                  imageUrl2={form.image_url_2}
+                  onChange={(next) => updateForm(next)}
+                  disabled={saving}
+                />
+
                 <div className="grid gap-3 sm:grid-cols-2">
-                  <button type="submit" disabled={saving} className="luxury-cta min-h-12 rounded-full bg-gradient-to-r from-luxury-accent to-yellow-400 px-6 py-3 font-bold text-black disabled:cursor-not-allowed disabled:opacity-60">
+                  <button type="submit" disabled={saving || validateMenuImages(form.image_url, form.image_url_2) !== null} className="luxury-cta min-h-12 rounded-full bg-gradient-to-r from-luxury-accent to-yellow-400 px-6 py-3 font-bold text-black disabled:cursor-not-allowed disabled:opacity-60">
                     {saving ? 'Saving...' : form.id ? 'Update Item' : 'Create Item'}
                   </button>
                   <button type="button" onClick={() => setForm(emptyForm)} className="min-h-12 rounded-full border border-white/30 px-6 py-3 font-bold text-white hover:border-luxury-accent hover:text-luxury-accent">
@@ -326,8 +347,16 @@ export default function AdminMenu() {
                       {visibleItems.map((item) => (
                         <tr key={item.id} className="bg-black/50">
                           <td className="rounded-l-xl px-3 py-4">
-                            <p className="font-semibold text-white">{item.name}</p>
-                            <p className="mt-1 max-w-md text-xs leading-5 text-white/55">{item.description}</p>
+                            <div className="flex items-start gap-3">
+                              {item.image_url ? (
+                                // eslint-disable-next-line @next/next/no-img-element
+                                <img src={item.image_url} alt="" className="h-12 w-12 shrink-0 rounded-md object-cover border border-luxury-accent/20" />
+                              ) : null}
+                              <div>
+                                <p className="font-semibold text-white">{item.name}</p>
+                                <p className="mt-1 max-w-md text-xs leading-5 text-white/70">{item.description}</p>
+                              </div>
+                            </div>
                           </td>
                           <td className="px-3 py-4 text-white/75">{item.menu_title}</td>
                           <td className="px-3 py-4 font-semibold text-luxury-accent">{item.price}</td>
@@ -361,6 +390,10 @@ export default function AdminMenu() {
                 <label className="flex flex-col gap-2 text-sm font-semibold text-white/75">
                   Description
                   <textarea className={`${inputClass} min-h-24`} value={categoryForm.description} onChange={(event) => setCategoryForm(prev => ({ ...prev, description: event.target.value }))} required />
+                </label>
+                <label className="flex flex-col gap-2 text-sm font-semibold text-white/75">
+                  Category image URL
+                  <input className={inputClass} value={categoryForm.image_url} onChange={(event) => setCategoryForm(prev => ({ ...prev, image_url: event.target.value }))} placeholder="/images/bbq3.jpeg" required />
                 </label>
                 <label className="flex flex-col gap-2 text-sm font-semibold text-white/75">
                   Sort Order

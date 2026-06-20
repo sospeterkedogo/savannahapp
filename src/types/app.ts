@@ -23,6 +23,8 @@ export type MenuItem = {
   sort_order?: number;
   is_available?: boolean;
   stock_quantity?: number;
+  image_url?: string;
+  image_url_2?: string;
 };
 
 export type MenuDetail = {
@@ -42,6 +44,8 @@ export type DbMenuItem = {
   sort_order: number;
   is_available: boolean;
   stock_quantity?: number;
+  image_url: string;
+  image_url_2: string;
   created_at?: string;
   updated_at?: string;
 };
@@ -164,6 +168,8 @@ export type AdminMenuFormState = {
   price: string;
   sort_order: string;
   is_available: boolean;
+  image_url: string;
+  image_url_2: string;
 };
 
 export type OnboardingRole = 'guest' | 'customer' | 'employee' | 'admin';

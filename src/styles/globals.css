@@ -88,7 +88,7 @@
 	--sav-surface: #f8f5f2;
 	--sav-text: rgba(255, 255, 255, 0.92);
 	--sav-text-soft: rgba(255, 255, 255, 0.72);
-	--sav-text-muted: rgba(255, 255, 255, 0.55);
+	--sav-text-muted: rgba(255, 255, 255, 0.62);
 	--sav-accent: #d4af37;
 	--sav-accent-2: #facc15;
 	--sav-accent-text: #050505;
@@ -182,19 +182,27 @@
 }
 
 html {
-	font-family: 'Inter', 'Lato', sans-serif;
+	font-family: var(--font-sans), system-ui, sans-serif;
 	background: var(--sav-bg);
 	color: var(--sav-surface);
+	font-size: 16px;
+	line-height: 1.55;
 }
 
 body {
 	background: var(--sav-bg);
 	color: var(--sav-text);
+	font-size: 0.9375rem;
 }
 
 h1, h2, h3, h4, h5, h6 {
-	font-family: 'Playfair Display', serif;
+	font-family: var(--font-display), Georgia, serif;
 	letter-spacing: 0.01em;
+	line-height: 1.2;
+}
+
+p, li, label, input, select, textarea, button {
+	line-height: 1.55;
 }
 
 a {

@@ -23,7 +23,10 @@ export function middleware(request: NextRequest) {
   }
 
   if (!url.pathname.startsWith('/staff')) {
-    url.pathname = `/staff${url.pathname === '/' ? '' : url.pathname}`;
+    if (url.pathname === '/') {
+      return NextResponse.redirect(new URL('/staff/login', request.url));
+    }
+    url.pathname = `/staff${url.pathname}`;
     return NextResponse.rewrite(url);
   }
 

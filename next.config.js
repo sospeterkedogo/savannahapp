@@ -1,12 +1,18 @@
-const path = require('path');
-
-/** @type {import('next').NextConfig} */       
+/** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'standalone',
   images: {
-    domains: [],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'rqazxvcanqiurjlrtkpz.supabase.co',
+        pathname: '/storage/v1/object/public/**',
+      },
+    ],
   },
-  outputFileTracingRoot: path.join(__dirname, '../../'),
 };
 
 module.exports = nextConfig;
+
+const { initOpenNextCloudflareForDev } = require('@opennextjs/cloudflare');
+initOpenNextCloudflareForDev();

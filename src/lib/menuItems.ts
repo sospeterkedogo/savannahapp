@@ -16,13 +16,15 @@ export function dbItemToMenuItem(item: DbMenuItem): MenuItem {
     sort_order: item.sort_order,
     is_available: item.is_available,
     stock_quantity: item.stock_quantity,
+    image_url: item.image_url,
+    image_url_2: item.image_url_2,
   };
 }
 
 export async function fetchPublicMenuItems(slug: MenuSlug): Promise<MenuItem[]> {
   const { data, error } = await supabase
     .from('savannah_menu_items')
-    .select('id, menu_slug, menu_title, name, description, price, sort_order, is_available, stock_quantity')
+    .select('id, menu_slug, menu_title, name, description, price, sort_order, is_available, stock_quantity, image_url, image_url_2')
     .eq('menu_slug', slug)
     .eq('is_available', true)
     .order('sort_order', { ascending: true })

@@ -104,7 +104,7 @@ export default function Menu() {
   if (loading) {
     return (
       <main className="min-h-screen flex flex-col items-center justify-center bg-black pb-16 pt-8">
-        <div className="animate-pulse text-luxury-accent text-2xl font-serif uppercase tracking-widest">Crafting Menus...</div>
+        <p className="animate-pulse text-luxury-accent text-2xl font-serif uppercase tracking-widest" role="status" aria-live="polite">Crafting Menus...</p>
       </main>
     );
   }
@@ -118,14 +118,16 @@ export default function Menu() {
       </div>
 
       <div className="w-full max-w-2xl mb-16 relative luxury-fade-in">
+        <label htmlFor="menu-search" className="sr-only">Search menu items</label>
         <input
-          type="text"
+          id="menu-search"
+          type="search"
           placeholder="Search for a dish, ingredient, or category..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="w-full h-14 bg-white/5 border border-luxury-accent/30 rounded-full px-8 text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-luxury-accent/50 transition-all text-lg"
         />
-        <div className="absolute right-6 top-1/2 -translate-y-1/2 text-luxury-accent/50">
+        <div className="absolute right-6 top-1/2 -translate-y-1/2 text-luxury-accent/70" aria-hidden="true">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
@@ -139,6 +141,7 @@ export default function Menu() {
             <Link
               key={category.slug}
               href={`/menu/${category.slug}`}
+              aria-label={`View full ${category.title} menu`}
               className={`group luxury-card relative overflow-hidden transition-all duration-500 hover:ring-2 hover:ring-luxury-accent/50 ${design.container} min-h-[500px]`}
             >
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-luxury-accent/40 to-transparent transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700"></div>

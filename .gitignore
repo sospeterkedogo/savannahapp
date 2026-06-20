@@ -1,8 +1,14 @@
 # env
 .env.local
+.dev.vars
 
 # build
 .next/
+.open-next/
+.wrangler/
+
+# secrets / local env
+.wrangler-secrets.tmp.json
 
 # dependencies
 node_modules/
@@ -10,7 +16,7 @@ node_modules/
 # package lock
 package-lock.json
 
-.open-next/
+
 
 
 

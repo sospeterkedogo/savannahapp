@@ -7,7 +7,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen flex flex-col bg-luxury-bg text-luxury-surface">
       <Nav />
-      <main className="flex-1 w-full mx-auto max-w-[1800px] px-8 md:px-16 py-10">{children}</main>
+      <div className="flex-1 w-full mx-auto max-w-[1800px] px-4 md:px-8 py-8">{children}</div>
       <RoleOnboarding />
       <CookieConsent />
       <Footer />
