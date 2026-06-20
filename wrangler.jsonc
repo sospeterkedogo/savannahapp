@@ -1,0 +1,20 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"main": ".open-next/worker.js",
+	"name": "savannahapp",
+	"compatibility_date": "2024-11-18",
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
+	"assets": {
+		"directory": ".open-next/assets",
+		"binding": "ASSETS"
+	},
+	"vars": {
+		"NEXT_PUBLIC_SUPABASE_URL": "https://rqazxvcanqiurjlrtkpz.supabase.co",
+		"NEXT_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJxYXp4dmNhbnFpdXJqbHJ0a3B6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgwOTMyMjIsImV4cCI6MjA5MzY2OTIyMn0.c56OhpndUwcVnmYtuBI8wKElkSe2-W8hPhV9aAqDTRw",
+		"SUPABASE_URL": "https://rqazxvcanqiurjlrtkpz.supabase.co",
+		"SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJxYXp4dmNhbnFpdXJqbHJ0a3B6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgwOTMyMjIsImV4cCI6MjA5MzY2OTIyMn0.c56OhpndUwcVnmYtuBI8wKElkSe2-W8hPhV9aAqDTRw",
+		"SUPABASE_SERVICE_ROLE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJxYXp4dmNhbnFpdXJqbHJ0a3B6Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODA5MzIyMiwiZXhwIjoyMDkzNjY5MjIyfQ.zNk6VNk0aXVaYQNceZbeKbD9k-cCPX61ZskYvXxOAwM"
+	}
+}

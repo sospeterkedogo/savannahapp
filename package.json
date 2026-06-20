@@ -1,0 +1,31 @@
+{
+  "name": "savannah-bar-and-grill",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "stop": "taskkill /F /IM node.exe",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "predeploy:check": "npm run typecheck && next build"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.43.4",
+    "next": "^16.0.0",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "react-icons": "^5.6.0"
+  },
+  "devDependencies": {
+    "@opennextjs/cloudflare": "^1.19.11",
+    "@types/node": "25.9.1",
+    "@types/react": "19.2.17",
+    "@types/react-dom": "^19",
+    "autoprefixer": "^10.4.0",
+    "postcss": "^8.4.0",
+    "tailwindcss": "^3.4.0",
+    "typescript": "5.9.3",
+    "wrangler": "^4.101.0"
+  }
+}
