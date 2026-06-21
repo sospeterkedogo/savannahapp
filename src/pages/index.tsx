@@ -25,7 +25,7 @@ export default function Home() {
         imageAlt="Inside Savannah Bar and Grill"
         priority
         imageClassName="brightness-[0.4]"
-        overlayClassName="bg-gradient-to-t from-vaha-ink via-vaha-ink/40 to-transparent"
+        overlayVariant="landing"
         className="min-h-screen flex-col justify-end"
       >
         <div className="vaha-container pb-12 pt-24 md:pb-14">
@@ -130,7 +130,7 @@ export default function Home() {
       <VahaHeroSection
         imageSrc={LANDING_IMAGES[0]}
         imageClassName="brightness-[0.2]"
-        overlayClassName="bg-vaha-ink/70"
+        overlayVariant="cta"
         className="vaha-section min-h-[320px] justify-center text-center"
       >
         <div className="vaha-container">

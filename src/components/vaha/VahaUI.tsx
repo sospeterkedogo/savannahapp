@@ -97,7 +97,7 @@ export function VahaHeroSection({
   imageAlt = '',
   priority = false,
   imageClassName = 'brightness-[0.35]',
-  overlayClassName = 'bg-gradient-to-t from-vaha-ink via-vaha-ink/60 to-vaha-ink/30',
+  overlayVariant = 'page',
   className = '',
   children,
 }: {
@@ -105,19 +105,25 @@ export function VahaHeroSection({
   imageAlt?: string;
   priority?: boolean;
   imageClassName?: string;
-  overlayClassName?: string;
+  overlayVariant?: 'page' | 'landing' | 'cta';
   className?: string;
   children: ReactNode;
 }) {
+  const overlayClass = {
+    page: 'vaha-hero-overlay--page',
+    landing: 'vaha-hero-overlay--landing',
+    cta: 'vaha-hero-overlay--cta',
+  }[overlayVariant];
+
   return (
-    <section className={`vaha-hero-section relative flex items-end bg-vaha-ink ${className}`}>
+    <section className={`vaha-hero-section relative flex items-end ${className}`}>
       {imageSrc ? (
         <>
           <VahaHeroBackground src={imageSrc} alt={imageAlt} priority={priority} imageClassName={imageClassName} />
-          <div className={`absolute inset-0 z-[1] ${overlayClassName}`} aria-hidden="true" />
+          <div className={`vaha-hero-overlay absolute inset-0 z-[1] ${overlayClass}`} aria-hidden="true" />
         </>
       ) : null}
-      <div className="relative z-10 w-full">{children}</div>
+      <div className="vaha-hero-content relative z-10 w-full">{children}</div>
     </section>
   );
 }
