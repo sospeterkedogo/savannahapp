@@ -81,12 +81,12 @@ export function VahaSplitSection({
 }) {
   return (
     <section className="vaha-section bg-vaha-ink-soft">
-      <div className={`vaha-container grid items-center gap-12 lg:grid-cols-2 lg:gap-20 ${reverse ? 'lg:[&>*:first-child]:order-2' : ''}`}>
+      <div className={`vaha-container grid items-center gap-6 lg:grid-cols-2 lg:gap-8 ${reverse ? 'lg:[&>*:first-child]:order-2' : ''}`}>
         <div className="relative aspect-[4/5] overflow-hidden border border-white/10">
           <Image src={imageSrc} alt={imageAlt} fill className="object-cover" sizes="(max-width: 1024px) 100vw, 50vw" />
           <div className="absolute inset-0 bg-gradient-to-t from-vaha-ink/50 to-transparent" aria-hidden="true" />
         </div>
-        <div className="space-y-8">
+        <div className="space-y-5">
           <VahaHeadline eyebrow={eyebrow} title={title} />
           <p className="max-w-xl text-base leading-relaxed text-vaha-muted md:text-lg">{body}</p>
           <VahaCta href={href}>{cta}</VahaCta>
@@ -106,10 +106,10 @@ export function VahaFeatureGrid({
   return (
     <section className="vaha-section bg-vaha-ink">
       <div className="vaha-container">
-        <h2 className="vaha-title mb-16 text-center">{sectionTitle}</h2>
-        <div className="grid gap-10 md:grid-cols-2">
+        <h2 className="vaha-title mb-8 text-center">{sectionTitle}</h2>
+        <div className="grid gap-4 md:grid-cols-2 md:gap-5">
           {items.map((item) => (
-            <article key={item.label} className="group border border-white/10 bg-vaha-ink-soft p-6 md:p-8">
+            <article key={item.label} className="group border border-white/10 bg-vaha-ink-soft p-4 md:p-5">
               <div className="relative mb-6 aspect-[16/10] overflow-hidden">
                 <Image
                   src={item.image}
@@ -142,7 +142,7 @@ export function VahaPageHero({
   imageSrc?: string;
 }) {
   return (
-    <section className="relative flex min-h-[50vh] items-end overflow-hidden border-b border-white/10 pb-16 pt-28 md:min-h-[55vh] md:pb-20">
+    <section className="relative flex min-h-[42vh] items-end overflow-hidden border-b border-white/10 pb-8 pt-24 md:min-h-[48vh] md:pb-10">
       {imageSrc ? (
         <>
           <Image src={imageSrc} alt="" fill priority className="object-cover brightness-[0.35]" sizes="100vw" />

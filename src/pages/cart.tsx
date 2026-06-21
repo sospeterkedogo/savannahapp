@@ -6,7 +6,7 @@ export default function Cart() {
 
   return (
     <main className="min-h-screen bg-black pb-16 pt-8">
-      <div className="mx-auto flex w-full max-w-[1700px] flex-col gap-6 px-4">
+      <div className="vaha-container flex flex-col gap-4 py-4">
         <section className="rounded-2xl border border-luxury-accent/30 bg-black/70 p-6 shadow-2xl">
           <p className="mb-2 text-sm font-semibold uppercase tracking-[0.18em] text-luxury-accent/80">Cart</p>
           <h1 className="text-4xl md:text-5xl font-serif font-bold text-luxury-accent">Your Order</h1>

@@ -30,7 +30,7 @@ export default function Nav() {
 
   return (
     <header className="sticky top-0 z-[100] border-b border-white/10 bg-vaha-ink/90 backdrop-blur-md">
-      <nav className="vaha-container flex items-center justify-between py-5" aria-label="Main">
+      <nav className="vaha-container flex items-center justify-between py-3" aria-label="Main">
         <Link href="/" className="flex items-center gap-3" aria-label="Savannah Home">
           <Image src="/images/logo.png" alt="" width={40} height={40} className="rounded-full border border-vaha-gold/30" priority />
           <span className="font-serif text-xl tracking-wide text-vaha-cream md:text-2xl">Savannah</span>

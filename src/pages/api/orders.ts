@@ -145,15 +145,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       }
     }
 
-    // Verify inventory stock
+    // Verify inventory stock (savannah_menu_items)
     for (const item of input.items || []) {
-      const { data: menuData, error: menuError } = await admin
-        .from('savannah_menus')
-        .select('id, stock_quantity, name')
+      let query = admin
+        .from('savannah_menu_items')
+        .select('id, stock_quantity, name, menu_slug')
         .eq('name', item.itemName)
-        .limit(1)
-        .single();
-        
+        .eq('is_available', true);
+
+      if (item.menuSlug) {
+        query = query.eq('menu_slug', item.menuSlug);
+      }
+
+      const { data: menuData, error: menuError } = await query.limit(1).maybeSingle();
+
       if (!menuError && menuData && menuData.stock_quantity !== null) {
         if (menuData.stock_quantity < item.quantity) {
           res.status(400).json({ error: `Insufficient stock for ${item.itemName}. Only ${menuData.stock_quantity} remaining.` });
@@ -187,18 +192,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
     const order = data as SavannahOrder;
 
-    // Decrement stock
+    // Decrement stock on savannah_menu_items
     for (const item of input.items || []) {
-      const { data: menuData } = await admin
-        .from('savannah_menus')
+      let query = admin
+        .from('savannah_menu_items')
         .select('id, stock_quantity')
-        .eq('name', item.itemName)
-        .limit(1)
-        .single();
-        
+        .eq('name', item.itemName);
+
+      if (item.menuSlug) {
+        query = query.eq('menu_slug', item.menuSlug);
+      }
+
+      const { data: menuData } = await query.limit(1).maybeSingle();
+
       if (menuData && menuData.stock_quantity !== null) {
         await admin
-          .from('savannah_menus')
+          .from('savannah_menu_items')
           .update({ stock_quantity: Math.max(0, menuData.stock_quantity - item.quantity) })
           .eq('id', menuData.id);
       }
@@ -206,12 +215,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
     const email = await sendReceiptEmail(order);
 
-    // Notify staff
+    if (userId) {
+      await admin.from('notifications').insert({
+        user_id: userId,
+        title: 'Order Placed',
+        message: `Order ${order.receipt_number} received for ${order.service}.`,
+        type: 'success',
+      });
+    }
+
     await admin.from('notifications').insert({
-      user_id: userId || order.id, // Just creating a general log/notification payload
+      user_id: null,
       title: 'New Order Placed',
       message: `Order ${order.receipt_number} received for ${order.service}.`,
-      type: 'info'
+      type: 'info',
     });
 
     res.status(200).json({ order, email });

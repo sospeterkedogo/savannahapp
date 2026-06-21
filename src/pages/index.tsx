@@ -23,7 +23,7 @@ export default function Home() {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-vaha-ink via-vaha-ink/40 to-transparent" aria-hidden="true" />
 
-        <div className="vaha-container relative z-10 pb-20 pt-32 md:pb-28">
+        <div className="vaha-container relative z-10 pb-12 pt-24 md:pb-14">
           <p className="vaha-eyebrow mb-6">Northampton &bull; Est. 2026</p>
           <h1 className="vaha-title-lg max-w-5xl">
             Savannah <span className="italic text-vaha-gold">Bar & Grill</span>
@@ -100,7 +100,7 @@ export default function Home() {
       />
 
       {/* Hours strip */}
-      <section className="border-y border-white/10 bg-vaha-ink-soft py-16">
+      <section className="border-y border-white/10 bg-vaha-ink-soft py-10">
         <div className="vaha-container grid gap-12 md:grid-cols-2">
           <div>
             <p className="vaha-eyebrow mb-4">Visit Us</p>

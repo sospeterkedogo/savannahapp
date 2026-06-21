@@ -79,7 +79,7 @@ export default function Menu() {
 
       <section className="vaha-section bg-vaha-ink-soft">
         <div className="vaha-container">
-          <div className="mx-auto mb-12 max-w-xl">
+          <div className="mb-6 max-w-xl">
             <label htmlFor="menu-search" className="vaha-eyebrow mb-3 block">
               Search
             </label>

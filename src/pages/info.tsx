@@ -30,7 +30,7 @@ export default function Info() {
       </VahaStoryBlock>
 
       <section className="vaha-section bg-vaha-ink-soft">
-        <div className="vaha-container grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
+        <div className="vaha-container grid items-center gap-6 lg:grid-cols-2 lg:gap-8">
           <div className="relative aspect-[4/5] overflow-hidden border border-white/10">
             <Image src="/images/about-meat.jpeg" alt="Wood-fire grill" fill className="object-cover" sizes="(max-width: 1024px) 100vw, 50vw" />
           </div>

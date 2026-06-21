@@ -311,11 +311,15 @@ button, .btn {
 
 /* Vaha Lounge–inspired layout system */
 .vaha-container {
-	@apply mx-auto w-full max-w-6xl px-6 md:px-10;
+	@apply mx-auto w-full max-w-none px-3 sm:px-4;
 }
 
 .vaha-section {
-	@apply py-20 md:py-28;
+	@apply py-10 md:py-12;
+}
+
+.vaha-footer-link {
+	@apply font-serif text-2xl leading-tight text-vaha-cream transition-colors hover:text-vaha-gold md:text-3xl lg:text-4xl;
 }
 
 .vaha-eyebrow {
