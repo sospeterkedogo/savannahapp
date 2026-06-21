@@ -80,6 +80,32 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+	.vaha-hero-section {
+		position: relative;
+		isolation: isolate;
+		overflow: hidden;
+	}
+
+	.vaha-hero-fixed-layer {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100vh;
+		height: 100svh;
+		z-index: 0;
+		pointer-events: none;
+	}
+
+	@media (max-width: 768px), (prefers-reduced-motion: reduce) {
+		.vaha-hero-fixed-layer {
+			position: absolute;
+			height: 100%;
+		}
+	}
+}
+
 :root,
 [data-theme="dark"] {
 	--sav-bg: #0c0c0c;

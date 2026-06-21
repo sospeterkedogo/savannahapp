@@ -1,7 +1,7 @@
-import Image from 'next/image';
 import {
   VahaCta,
   VahaFeatureGrid,
+  VahaHeroSection,
   VahaPageShell,
   VahaSplitSection,
   VahaStoryBlock,
@@ -20,18 +20,15 @@ const LANDING_IMAGES = [
 export default function Home() {
   return (
     <VahaPageShell>
-      <section className="relative flex min-h-screen flex-col justify-end overflow-hidden">
-        <Image
-          src={LANDING_IMAGES[0]}
-          alt="Inside Savannah Bar and Grill"
-          fill
-          priority
-          className="object-cover brightness-[0.4]"
-          sizes="100vw"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-vaha-ink via-vaha-ink/40 to-transparent" aria-hidden="true" />
-
-        <div className="vaha-container relative z-10 pb-12 pt-24 md:pb-14">
+      <VahaHeroSection
+        imageSrc={LANDING_IMAGES[0]}
+        imageAlt="Inside Savannah Bar and Grill"
+        priority
+        imageClassName="brightness-[0.4]"
+        overlayClassName="bg-gradient-to-t from-vaha-ink via-vaha-ink/40 to-transparent"
+        className="min-h-screen flex-col justify-end"
+      >
+        <div className="vaha-container pb-12 pt-24 md:pb-14">
           <p className="vaha-eyebrow mb-6">Northampton</p>
           <h1 className="vaha-title-lg max-w-5xl">
             Savannah <span className="italic text-vaha-gold">Bar & Grill</span>
@@ -46,7 +43,7 @@ export default function Home() {
             <VahaCta href="/book">Book a Table</VahaCta>
           </div>
         </div>
-      </section>
+      </VahaHeroSection>
 
       <VahaStoryBlock title="About Us">
         <p>
@@ -130,17 +127,13 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="vaha-section relative min-h-[320px] overflow-hidden text-center">
-        <Image
-          src={LANDING_IMAGES[0]}
-          alt=""
-          fill
-          loading="lazy"
-          className="object-cover brightness-[0.2]"
-          sizes="100vw"
-        />
-        <div className="absolute inset-0 bg-vaha-ink/70" aria-hidden="true" />
-        <div className="vaha-container relative z-10">
+      <VahaHeroSection
+        imageSrc={LANDING_IMAGES[0]}
+        imageClassName="brightness-[0.2]"
+        overlayClassName="bg-vaha-ink/70"
+        className="vaha-section min-h-[320px] justify-center text-center"
+      >
+        <div className="vaha-container">
           <h2 className="vaha-title mb-6">Visit Tonight</h2>
           <p className="mx-auto mb-10 max-w-xl text-lg text-vaha-muted">
             Book a table online in a few clicks.
@@ -149,7 +142,7 @@ export default function Home() {
             Book a Table
           </VahaCta>
         </div>
-      </section>
+      </VahaHeroSection>
     </VahaPageShell>
   );
 }

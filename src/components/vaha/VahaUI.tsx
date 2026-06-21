@@ -62,6 +62,66 @@ export function VahaStoryBlock({
   );
 }
 
+export const VAHA_DEFAULT_HERO_IMAGE = '/images/bbq3.jpeg';
+
+/** Fixed viewport hero background — parallax while scrolling past the hero. */
+export function VahaHeroBackground({
+  src,
+  alt = '',
+  priority = false,
+  imageClassName = '',
+}: {
+  src: string;
+  alt?: string;
+  priority?: boolean;
+  imageClassName?: string;
+}) {
+  return (
+    <div className="pointer-events-none absolute inset-0 z-0" aria-hidden="true">
+      <div className="vaha-hero-fixed-layer relative">
+        <Image
+          src={src}
+          alt={alt}
+          fill
+          priority={priority}
+          sizes="100vw"
+          className={`object-cover object-center ${imageClassName}`}
+        />
+      </div>
+    </div>
+  );
+}
+
+export function VahaHeroSection({
+  imageSrc,
+  imageAlt = '',
+  priority = false,
+  imageClassName = 'brightness-[0.35]',
+  overlayClassName = 'bg-gradient-to-t from-vaha-ink via-vaha-ink/60 to-vaha-ink/30',
+  className = '',
+  children,
+}: {
+  imageSrc?: string;
+  imageAlt?: string;
+  priority?: boolean;
+  imageClassName?: string;
+  overlayClassName?: string;
+  className?: string;
+  children: ReactNode;
+}) {
+  return (
+    <section className={`vaha-hero-section relative flex items-end bg-vaha-ink ${className}`}>
+      {imageSrc ? (
+        <>
+          <VahaHeroBackground src={imageSrc} alt={imageAlt} priority={priority} imageClassName={imageClassName} />
+          <div className={`absolute inset-0 z-[1] ${overlayClassName}`} aria-hidden="true" />
+        </>
+      ) : null}
+      <div className="relative z-10 w-full">{children}</div>
+    </section>
+  );
+}
+
 export function VahaSplitSection({
   eyebrow,
   title,
@@ -137,7 +197,7 @@ export function VahaPageHero({
   eyebrow,
   title,
   description,
-  imageSrc,
+  imageSrc = VAHA_DEFAULT_HERO_IMAGE,
 }: {
   eyebrow?: string;
   title: string;
@@ -145,19 +205,17 @@ export function VahaPageHero({
   imageSrc?: string;
 }) {
   return (
-    <section className="relative flex min-h-[42vh] items-end overflow-hidden border-b border-white/10 pb-8 pt-24 md:min-h-[48vh] md:pb-10">
-      {imageSrc ? (
-        <>
-          <Image src={imageSrc} alt="" fill priority className="object-cover brightness-[0.35]" sizes="100vw" />
-          <div className="absolute inset-0 bg-gradient-to-t from-vaha-ink via-vaha-ink/60 to-vaha-ink/30" aria-hidden="true" />
-        </>
-      ) : null}
-      <div className="vaha-container relative z-10">
+    <VahaHeroSection
+      imageSrc={imageSrc}
+      priority
+      className="border-b border-white/10 pb-8 pt-24 min-h-[42vh] md:min-h-[48vh] md:pb-10"
+    >
+      <div className="vaha-container">
         {eyebrow ? <p className="vaha-eyebrow mb-4">{eyebrow}</p> : null}
         <h1 className="vaha-title-lg max-w-4xl">{title}</h1>
         {description ? <p className="mt-6 max-w-2xl text-lg text-vaha-muted">{description}</p> : null}
       </div>
-    </section>
+    </VahaHeroSection>
   );
 }
 
