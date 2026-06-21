@@ -16,6 +16,7 @@ import {
 import type { AdminMenuFormState, DbMenuItem, MenuItemInput, DbMenuCategory, MenuCategoryInput } from '../../types/app';
 import MenuImageUpload from '../../components/admin/MenuImageUpload';
 import { validateMenuImages } from '../../lib/menuImages';
+import { VahaAlert, VahaButton, VahaLoading, VahaPageShell, VahaPanel, vahaInputClass } from '../../components/vaha/VahaUI';
 
 export const getServerSideProps: GetServerSideProps = async () => {
   return { props: {} };
@@ -43,8 +44,7 @@ const emptyCategoryForm: MenuCategoryInput & { id: string } = {
   sort_order: 10,
 };
 
-const inputClass =
-  'min-h-11 rounded-lg border border-luxury-accent/40 bg-black/40 px-3 py-2 text-sm text-white placeholder:text-white/45 focus:ring-2 focus:ring-luxury-accent';
+const inputClass = vahaInputClass;
 
 function itemToForm(item: DbMenuItem): AdminMenuFormState {
   return {
@@ -111,6 +111,18 @@ export default function AdminMenu() {
 
   useEffect(() => {
     if (allowed) loadData();
+
+    if (!allowed) return;
+
+    const channel = supabase
+      .channel('admin:menu_changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'savannah_menu_items' }, () => loadData())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'savannah_menu_categories' }, () => loadData())
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [allowed]);
 
   function updateForm(next: Partial<AdminMenuFormState>) {
@@ -217,46 +229,41 @@ export default function AdminMenu() {
   }
 
   if (authLoading) {
-    return <main className="min-h-screen bg-black px-4 py-16 text-center text-white/70">Checking staff access...</main>;
+    return (
+      <VahaPageShell>
+        <VahaLoading label="Checking staff access…" />
+      </VahaPageShell>
+    );
   }
 
   if (!allowed) {
     return (
-      <main className="min-h-screen flex flex-col items-center justify-center bg-black pb-16 pt-8">
-        <section className="w-full max-w-xl rounded-2xl border border-luxury-accent/30 bg-black/70 p-8 text-center shadow-2xl">
-          <h1 className="text-4xl font-serif font-bold text-luxury-accent">Staff Access Required</h1>
-          <p className="mt-4 text-white/70">Your signed-in account is not marked as an admin or employee profile.</p>
-          <button onClick={handleSignOut} className="luxury-cta mt-6 rounded-full bg-gradient-to-r from-luxury-accent to-yellow-400 px-8 py-3 font-bold text-black">Sign Out</button>
-        </section>
-      </main>
+      <VahaPageShell>
+        <div className="vaha-container flex min-h-[60vh] items-center justify-center py-10">
+          <VahaPanel title="Staff Access Required" description="Your account is not marked as admin or employee.">
+            <VahaButton variant="solid" className="mt-4" onClick={handleSignOut}>
+              Sign Out
+            </VahaButton>
+          </VahaPanel>
+        </div>
+      </VahaPageShell>
     );
   }
 
   return (
-    <main className="min-h-screen bg-black pb-16 pt-8">
-      <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4">
-        <section className="rounded-2xl border border-luxury-accent/30 bg-black/70 p-6 shadow-2xl">
-          <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-            <div>
-              <p className="mb-2 text-sm font-semibold uppercase tracking-[0.18em] text-luxury-accent/80">Savannah staff</p>
-              <h1 className="text-4xl md:text-5xl font-serif font-bold text-luxury-accent">Menu Management</h1>
-              <p className="mt-3 text-sm text-white/70">Signed in as {profile?.email} ({profile?.role}). Manage categories and menu items.</p>
-            </div>
-            <div className="flex flex-wrap gap-3">
-              <button onClick={() => setView('items')} className={`rounded-full px-6 py-3 text-sm font-bold transition-all ${view === 'items' ? 'bg-luxury-accent text-black' : 'border border-white/30 text-white hover:border-luxury-accent'}`}>Items</button>
-              <button onClick={() => setView('categories')} className={`rounded-full px-6 py-3 text-sm font-bold transition-all ${view === 'categories' ? 'bg-luxury-accent text-black' : 'border border-white/30 text-white hover:border-luxury-accent'}`}>Categories</button>
-              <div className="w-px bg-white/10 mx-2 hidden md:block"></div>
-              <Link href="/staff" className="rounded-full border border-white/30 px-5 py-3 text-sm font-bold text-white hover:border-luxury-accent hover:text-luxury-accent">Staff Home</Link>
-              <button onClick={handleSignOut} className="rounded-full border border-white/30 px-5 py-3 text-sm font-bold text-white hover:border-luxury-accent hover:text-luxury-accent">Sign Out</button>
-            </div>
+    <VahaPageShell>
+      <div className="vaha-container flex flex-col gap-4 py-6">
+        <VahaPanel eyebrow="Savannah staff" title="Menu Management" description={`Signed in as ${profile?.email} (${profile?.role}). Changes sync live to the public menu.`}>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <VahaButton variant={view === 'items' ? 'solid' : 'outline'} onClick={() => setView('items')}>Items</VahaButton>
+            <VahaButton variant={view === 'categories' ? 'solid' : 'outline'} onClick={() => setView('categories')}>Categories</VahaButton>
+            <Link href="/staff" className="text-xs uppercase tracking-widest text-vaha-gold hover:underline">Staff Home</Link>
+            <VahaButton variant="ghost" onClick={handleSignOut}>Sign Out</VahaButton>
           </div>
-        </section>
+        </VahaPanel>
 
-        {(message || error) && (
-          <div className={`rounded-xl border px-4 py-3 text-sm ${error ? 'border-red-400/50 bg-red-950/50 text-red-100' : 'border-green-400/50 bg-green-950/40 text-green-100'}`}>
-            {error || message}
-          </div>
-        )}
+        {error ? <VahaAlert tone="error">{error}</VahaAlert> : null}
+        {message ? <VahaAlert tone="success">{message}</VahaAlert> : null}
 
         {view === 'items' ? (
           <div className="grid gap-6 lg:grid-cols-[420px_1fr] ">
@@ -442,6 +449,6 @@ export default function AdminMenu() {
           </div>
         )}
       </div>
-    </main>
+    </VahaPageShell>
   );
 }

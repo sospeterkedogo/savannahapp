@@ -18,6 +18,15 @@ import type {
   CustomerProfile,
   SavannahOrder,
 } from '../types/app';
+import {
+  VahaAlert,
+  VahaButton,
+  VahaCta,
+  VahaPageShell,
+  VahaPanel,
+  vahaInputClass,
+  vahaTextareaClass,
+} from '../components/vaha/VahaUI';
 
 const emptyForm: CheckoutCustomerForm = {
   email: '',
@@ -29,8 +38,7 @@ const emptyForm: CheckoutCustomerForm = {
   notes: '',
 };
 
-const inputClass =
-  'min-h-12 rounded-lg border border-luxury-accent/50 bg-black/40 px-4 py-3 text-white placeholder:text-white/50 focus:ring-2 focus:ring-luxury-accent';
+const inputClass = vahaInputClass;
 
 export default function Checkout() {
   const { items, count, subtotal, clearCart } = useCart();
@@ -195,133 +203,115 @@ export default function Checkout() {
 
   if (placedOrder) {
     return (
-      <main className="min-h-screen bg-black pb-16 pt-8">
-        <section className="mx-auto w-full max-w-4xl rounded-2xl border border-luxury-accent/30 bg-black/70 p-6 shadow-2xl md:p-8">
-          <p className="mb-2 text-sm font-semibold uppercase tracking-[0.18em] text-luxury-accent/80">Receipt & invoice</p>
-          <h1 className="text-4xl md:text-5xl font-serif font-bold text-luxury-accent">Order Placed</h1>
-          {!placedOrder.user_id && (
-            <p className="mt-3 text-white/70">This was placed as a guest order. Keep this receipt number for collection or support.</p>
-          )}
-          <div className="mt-6 grid gap-4 md:grid-cols-2">
-            <p className="text-white"><span className="text-white/50">Invoice:</span> {placedOrder.invoice_number}</p>
-            <p className="text-white"><span className="text-white/50">Receipt:</span> {placedOrder.receipt_number}</p>
-            <p className="text-white"><span className="text-white/50">Total:</span> ${Number(placedOrder.subtotal).toFixed(2)}</p>
-            <p className="text-white"><span className="text-white/50">Status:</span> {placedOrder.status}</p>
-          </div>
-          {location.mapsLink && (
-            <a className="mt-5 inline-flex text-luxury-accent underline underline-offset-4" href={location.mapsLink} target="_blank" rel="noopener noreferrer">
-              Open delivery location in Google Maps
-            </a>
-          )}
-          <div className="mt-8 flex flex-wrap gap-3">
-            {placedOrder.user_id ? (
-              <Link href="/profile" className="luxury-cta rounded-full bg-gradient-to-r from-luxury-accent to-yellow-400 px-8 py-3 font-bold text-black">View Profile</Link>
-            ) : (
-              <Link href="/login?redirect=/profile" className="luxury-cta rounded-full bg-gradient-to-r from-luxury-accent to-yellow-400 px-8 py-3 font-bold text-black">Create Profile</Link>
-            )}
-            <Link href="/menu" className="rounded-full border border-luxury-accent/50 px-8 py-3 font-bold text-luxury-accent hover:bg-luxury-accent hover:text-black">Order More</Link>
-          </div>
-        </section>
-      </main>
+      <VahaPageShell>
+        <div className="vaha-container py-6">
+          <VahaPanel eyebrow="Receipt & invoice" title="Order Placed" description={!placedOrder.user_id ? 'Guest order — keep this receipt number for collection or support.' : undefined}>
+            <div className="mt-4 grid gap-3 text-sm md:grid-cols-2">
+              <p><span className="text-vaha-muted">Invoice:</span> {placedOrder.invoice_number}</p>
+              <p><span className="text-vaha-muted">Receipt:</span> {placedOrder.receipt_number}</p>
+              <p><span className="text-vaha-muted">Total:</span> £{Number(placedOrder.subtotal).toFixed(2)}</p>
+              <p><span className="text-vaha-muted">Status:</span> {placedOrder.status}</p>
+            </div>
+            {location.mapsLink ? (
+              <a className="mt-4 inline-flex text-sm text-vaha-gold underline underline-offset-4" href={location.mapsLink} target="_blank" rel="noopener noreferrer">
+                Open delivery location
+              </a>
+            ) : null}
+            <div className="mt-6 flex flex-wrap gap-3">
+              {placedOrder.user_id ? (
+                <VahaCta href="/profile" variant="solid">View Account</VahaCta>
+              ) : (
+                <VahaCta href="/login?redirect=/profile" variant="solid">Create Account</VahaCta>
+              )}
+              <VahaCta href="/menu">Order More</VahaCta>
+            </div>
+          </VahaPanel>
+        </div>
+      </VahaPageShell>
     );
   }
 
   return (
-    <main className="min-h-screen bg-black pb-16 pt-8">
-      <div className="vaha-container flex flex-col gap-4 py-4">
-        <section className="rounded-2xl border border-luxury-accent/30 bg-black/70 p-6 shadow-2xl">
-          <p className="mb-2 text-sm font-semibold uppercase tracking-[0.18em] text-luxury-accent/80">Checkout</p>
-          <h1 className="text-4xl md:text-5xl font-serif font-bold text-luxury-accent">Cart Checkout</h1>
-          <p className="mt-3 text-white/70">Checkout as a guest, or sign in to save your profile and order history. Location is only requested when you choose it.</p>
-        </section>
+    <VahaPageShell>
+      <div className="vaha-container flex flex-col gap-4 py-6">
+        <VahaPanel eyebrow="Checkout" title="Cart Checkout" description="Checkout as a guest or sign in to save your profile and order history." />
 
-        {error && <p className="rounded-xl border border-red-400/50 bg-red-950/50 px-4 py-3 text-sm text-red-100">{error}</p>}
+        {error ? <VahaAlert tone="error">{error}</VahaAlert> : null}
 
-        <div className="grid gap-6 lg:grid-cols-[1fr_420px]">
-          <div className="flex flex-col gap-6">
-            {!sessionUserId && (
-              <section className="rounded-2xl border border-luxury-accent/25 bg-black/60 p-5 shadow-xl">
-                <p className="mb-4 text-sm text-white/70">Account is optional. Guest checkout works with just your contact details and address.</p>
-                <SocialLoginButtons context="checkout" redirectTo="/checkout" onError={setError} className="mb-5" />
-                <div className="mb-5 flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.16em] text-white/40">
-                  <span className="h-px flex-1 bg-white/15" />
-                  <span>Email</span>
-                  <span className="h-px flex-1 bg-white/15" />
+        <div className="grid gap-4 lg:grid-cols-[1fr_380px]">
+          <div className="flex flex-col gap-4">
+            {!sessionUserId ? (
+              <VahaPanel title="Account (optional)">
+                <p className="mb-4 text-sm text-vaha-muted">Guest checkout works with contact details and address only.</p>
+                <SocialLoginButtons context="checkout" redirectTo="/checkout" onError={setError} className="mb-4" />
+                <div className="mb-4 flex gap-2">
+                  <VahaButton variant={mode === 'signin' ? 'solid' : 'outline'} onClick={() => setMode('signin')}>Sign In</VahaButton>
+                  <VahaButton variant={mode === 'create' ? 'solid' : 'outline'} onClick={() => setMode('create')}>Create</VahaButton>
                 </div>
-                <div className="mb-5 flex gap-3">
-                  <button onClick={() => setMode('signin')} className={`rounded-full px-5 py-2 font-bold ${mode === 'signin' ? 'bg-luxury-accent text-black' : 'border border-white/30 text-white'}`}>Sign In</button>
-                  <button onClick={() => setMode('create')} className={`rounded-full px-5 py-2 font-bold ${mode === 'create' ? 'bg-luxury-accent text-black' : 'border border-white/30 text-white'}`}>Create Account</button>
-                </div>
-                <form className="grid gap-4" onSubmit={handleAccount}>
-                  {mode === 'create' && (
-                    <input className={inputClass} value={form.fullName} onChange={(event) => updateForm({ fullName: event.target.value })} placeholder="Full name" aria-label="Full name" required />
-                  )}
-                  <input className={inputClass} value={form.email} onChange={(event) => updateForm({ email: event.target.value })} placeholder="Email" aria-label="Email" type="email" autoComplete="email" required />
-                  <input className={inputClass} value={form.password} onChange={(event) => updateForm({ password: event.target.value })} placeholder="Password" aria-label="Password" type="password" autoComplete={mode === 'signin' ? 'current-password' : 'new-password'} required />
-                  <button disabled={loading} className="luxury-cta rounded-full bg-gradient-to-r from-luxury-accent to-yellow-400 px-8 py-3 font-bold text-black disabled:opacity-60">
-                    {loading ? 'Working...' : mode === 'signin' ? 'Sign In' : 'Create Account'}
-                  </button>
+                <form className="grid gap-3" onSubmit={handleAccount}>
+                  {mode === 'create' ? (
+                    <input className={inputClass} value={form.fullName} onChange={(e) => updateForm({ fullName: e.target.value })} placeholder="Full name" aria-label="Full name" required />
+                  ) : null}
+                  <input className={inputClass} value={form.email} onChange={(e) => updateForm({ email: e.target.value })} placeholder="Email" aria-label="Email" type="email" autoComplete="email" required />
+                  <input className={inputClass} value={form.password} onChange={(e) => updateForm({ password: e.target.value })} placeholder="Password" aria-label="Password" type="password" autoComplete={mode === 'signin' ? 'current-password' : 'new-password'} required />
+                  <VahaButton type="submit" variant="solid" disabled={loading}>
+                    {loading ? 'Working…' : mode === 'signin' ? 'Sign In' : 'Create Account'}
+                  </VahaButton>
                 </form>
-              </section>
-            )}
+              </VahaPanel>
+            ) : null}
 
-            <section className="rounded-2xl border border-luxury-accent/25 bg-black/60 p-5 shadow-xl">
-              <h2 className="text-2xl font-serif font-bold text-luxury-accent">Customer & Location</h2>
-              <form className="mt-5 grid gap-4" onSubmit={placeOrder}>
-                <div className="grid gap-4 md:grid-cols-2">
-                  <input className={inputClass} value={form.fullName} onChange={(event) => updateForm({ fullName: event.target.value })} placeholder="Full name" aria-label="Full name" required />
-                  <input className={inputClass} value={form.phone} onChange={(event) => updateForm({ phone: event.target.value })} placeholder="Phone" aria-label="Phone" type="tel" required />
+            <VahaPanel title="Customer & Location">
+              <form className="mt-4 grid gap-3" onSubmit={placeOrder}>
+                <div className="grid gap-3 md:grid-cols-2">
+                  <input className={inputClass} value={form.fullName} onChange={(e) => updateForm({ fullName: e.target.value })} placeholder="Full name" aria-label="Full name" required />
+                  <input className={inputClass} value={form.phone} onChange={(e) => updateForm({ phone: e.target.value })} placeholder="Phone" aria-label="Phone" type="tel" required />
                 </div>
-                <input className={inputClass} value={form.email} onChange={(event) => updateForm({ email: event.target.value })} placeholder="Email for receipt (optional)" aria-label="Email for receipt" type="email" autoComplete="email" />
-                <textarea className={`${inputClass} min-h-24`} value={form.address} onChange={(event) => updateForm({ address: event.target.value })} placeholder="Delivery or collection address" aria-label="Address" required />
-                <div className="rounded-xl border border-white/10 bg-black/35 p-4">
-                  <p className="text-sm text-white/70">Location is optional. We ask only when you press the button, and use it for this order location and receipt.</p>
-                  <button type="button" onClick={requestLocation} className="mt-3 rounded-full border border-luxury-accent/50 px-5 py-2 font-bold text-luxury-accent hover:bg-luxury-accent hover:text-black">
-                    Use My Location
-                  </button>
-                  {locationMessage && <p className="mt-3 text-sm text-white/65">{locationMessage}</p>}
-                  {location.mapsLink && (
-                    <a className="mt-3 inline-flex text-sm text-luxury-accent underline underline-offset-4" href={location.mapsLink} target="_blank" rel="noopener noreferrer">
-                      Preview Google Maps location
-                    </a>
-                  )}
+                <input className={inputClass} value={form.email} onChange={(e) => updateForm({ email: e.target.value })} placeholder="Email for receipt (optional)" aria-label="Email for receipt" type="email" autoComplete="email" />
+                <textarea className={vahaTextareaClass} value={form.address} onChange={(e) => updateForm({ address: e.target.value })} placeholder="Delivery or collection address" aria-label="Address" required />
+                <div className="border border-white/10 p-3">
+                  <p className="text-sm text-vaha-muted">Location is optional — only requested when you tap the button.</p>
+                  <VahaButton type="button" variant="outline" className="mt-3" onClick={requestLocation}>Use My Location</VahaButton>
+                  {locationMessage ? <p className="mt-2 text-sm text-vaha-muted">{locationMessage}</p> : null}
+                  {location.mapsLink ? (
+                    <a className="mt-2 inline-flex text-sm text-vaha-gold underline" href={location.mapsLink} target="_blank" rel="noopener noreferrer">Preview on Maps</a>
+                  ) : null}
                 </div>
-                <select className={inputClass} value={form.service} onChange={(event) => updateForm({ service: event.target.value })} aria-label="Checkout service">
+                <select className={inputClass} value={form.service} onChange={(e) => updateForm({ service: e.target.value })} aria-label="Checkout service">
                   <option value="collection">Collection</option>
                   <option value="table">Table order</option>
                   <option value="delivery">Delivery</option>
                 </select>
-                <textarea className={`${inputClass} min-h-24`} value={form.notes} onChange={(event) => updateForm({ notes: event.target.value })} placeholder="Checkout notes" aria-label="Checkout notes" />
-                <button disabled={loading || items.length === 0} className="luxury-cta rounded-full bg-gradient-to-r from-luxury-accent to-yellow-400 px-8 py-3 text-lg font-bold text-black disabled:cursor-not-allowed disabled:opacity-60">
-                  {loading ? 'Placing Order...' : sessionUserId ? 'Place Order' : 'Place Guest Order'}
-                </button>
+                <textarea className={vahaTextareaClass} value={form.notes} onChange={(e) => updateForm({ notes: e.target.value })} placeholder="Checkout notes" aria-label="Checkout notes" />
+                <VahaButton type="submit" variant="solid" disabled={loading || items.length === 0}>
+                  {loading ? 'Placing Order…' : sessionUserId ? 'Place Order' : 'Place Guest Order'}
+                </VahaButton>
               </form>
-            </section>
+            </VahaPanel>
           </div>
 
-          <aside className="rounded-2xl border border-luxury-accent/25 bg-black/60 p-5 shadow-xl">
-            <h2 className="text-2xl font-serif font-bold text-luxury-accent">Order Summary</h2>
+          <VahaPanel title="Order Summary">
             {items.length === 0 ? (
-              <div className="mt-6 text-white/70">
+              <div className="mt-4 text-vaha-muted">
                 <p>Your cart is empty.</p>
-                <Link href="/menu" className="mt-4 inline-flex text-luxury-accent underline underline-offset-4">Browse menu</Link>
+                <Link href="/menu" className="mt-3 inline-block text-vaha-gold underline">Browse menu</Link>
               </div>
             ) : (
-              <div className="mt-5 grid gap-4">
+              <div className="mt-4 grid gap-3">
                 {items.map((item) => (
-                  <div key={item.id} className="border-b border-white/10 pb-4">
-                    <p className="font-semibold text-white">{item.quantity}x {item.itemName}</p>
-                    <p className="mt-1 text-sm text-white/55">{item.menuTitle} | {item.service}</p>
-                    <p className="mt-1 text-sm font-bold text-luxury-accent">{item.price}</p>
+                  <div key={item.id} className="border-b border-white/10 pb-3">
+                    <p className="font-semibold">{item.quantity}x {item.itemName}</p>
+                    <p className="text-sm text-vaha-muted">{item.menuTitle} | {item.service}</p>
+                    <p className="text-sm text-vaha-gold">{item.price}</p>
                   </div>
                 ))}
-                <p className="text-2xl font-bold text-white">Subtotal ${subtotal.toFixed(2)}</p>
-                <Link href="/cart" className="text-sm font-semibold text-luxury-accent underline underline-offset-4">Edit cart</Link>
+                <p className="font-serif text-2xl">Subtotal £{subtotal.toFixed(2)}</p>
+                <Link href="/cart" className="text-sm text-vaha-gold underline">Edit cart</Link>
               </div>
             )}
-          </aside>
+          </VahaPanel>
         </div>
       </div>
-    </main>
+    </VahaPageShell>
   );
 }

@@ -1,24 +1,33 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import {
   VahaCta,
   VahaFeatureGrid,
   VahaPageShell,
+  VahaReliableImage,
   VahaSplitSection,
   VahaStoryBlock,
 } from '../components/vaha/VahaUI';
 
+const LANDING_IMAGES = [
+  '/images/bbq3.jpeg',
+  '/images/grilling-p.jpg',
+  '/images/burger-drinks-p.jpg',
+  '/images/about-bbq.jpeg',
+  '/images/about-drinks.jpeg',
+  '/images/meat-w.jpg',
+  '/images/bbq3.jpeg',
+];
+
 export default function Home() {
   return (
     <VahaPageShell>
-      {/* Hero — full-bleed, minimal copy like Vaha */}
       <section className="relative flex min-h-screen flex-col justify-end overflow-hidden">
-        <Image
-          src="/images/bbq3.jpeg"
+        <VahaReliableImage
+          src={LANDING_IMAGES[0]}
           alt="Savannah Bar and Grill dining room"
           fill
           priority
-          className="object-cover brightness-[0.4]"
+          className="brightness-[0.4]"
           sizes="100vw"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-vaha-ink via-vaha-ink/40 to-transparent" aria-hidden="true" />
@@ -54,7 +63,7 @@ export default function Home() {
         body="For those with pure food indulgence in mind, experience our grill-led menu inspired by global smoke-house traditions. We take inspiration from wood-fire technique, premium cuts, and seasonal produce to craft the Savannah signature."
         cta="The Menu Library"
         href="/menu"
-        imageSrc="/images/grilling-p.jpg"
+        imageSrc={LANDING_IMAGES[1]}
         imageAlt="Wood-fired grill at Savannah"
       />
 
@@ -64,7 +73,7 @@ export default function Home() {
         body="Savannah boasts an exciting beverages menu featuring cocktails crafted in-house. Our team discovers new flavour pairings and techniques to elevate the art of spirits — from Savannah Gold to classic martinis."
         cta="Discover the Art of Mixology"
         href="/menu/cocktail"
-        imageSrc="/images/burger-drinks-p.jpg"
+        imageSrc={LANDING_IMAGES[2]}
         imageAlt="Cocktails at Savannah bar"
         reverse
       />
@@ -76,36 +85,35 @@ export default function Home() {
             label: 'The Dining Space',
             title: 'Savannah Dining',
             body: 'Soft ambient lighting and golden accents create intimacy for every occasion — from intimate dinners to celebrations with friends.',
-            image: '/images/about-bbq.jpeg',
+            image: LANDING_IMAGES[3],
           },
           {
             label: 'Quality Mixology',
             title: 'Savannah Bar',
             body: 'Impeccable mixology shines through every pour. From beautiful flavour pairings to immersive presentation, our bar is unmatched.',
-            image: '/images/about-drinks.jpeg',
+            image: LANDING_IMAGES[4],
           },
           {
             label: 'Delicious Food',
             title: 'The Grill',
             body: 'Wood-fired flavour pushes through every bite of our signature dishes. Our kitchen team brings knowledge in taste, colour, and quality.',
-            image: '/images/meat-w.jpg',
+            image: LANDING_IMAGES[5],
           },
           {
             label: 'Our Legacy',
             title: 'The Experience',
             body: 'Crafted for those who appreciate real flavour — special selections, chef-driven menus, and world-class hospitality.',
-            image: '/images/bbq2.jpeg',
+            image: LANDING_IMAGES[0],
           },
         ]}
       />
 
-      {/* Hours strip */}
       <section className="border-y border-white/10 bg-vaha-ink-soft py-10">
-        <div className="vaha-container grid gap-12 md:grid-cols-2">
+        <div className="vaha-container grid gap-8 md:grid-cols-2">
           <div>
             <p className="vaha-eyebrow mb-4">Visit Us</p>
             <h2 className="vaha-title-sm">Hours & Location</h2>
-            <p className="mt-6 text-vaha-muted leading-relaxed">
+            <p className="mt-6 leading-relaxed text-vaha-muted">
               17 Wellingborough Road, Northampton, NN1 2AB
               <br />
               <a href="tel:+44234567890" className="text-vaha-gold hover:underline">
@@ -117,16 +125,15 @@ export default function Home() {
             <tbody>
               <tr className="border-b border-white/5"><td className="py-3">Mon – Thu</td><td className="py-3 text-right">12:00 – 23:00</td></tr>
               <tr className="border-b border-white/5"><td className="py-3">Friday</td><td className="py-3 text-right">12:00 – 00:00</td></tr>
-              <tr className="border-b border-white/5"><td className="py-3">Saturday</td><td className="py-3 text-right">10:00 – 00:00</td></tr>
+              <tr className="border-b border-white/5"><td className="py-3">Saturday</td><td className="py-3 text-right">12:00 – 00:00</td></tr>
               <tr><td className="py-3">Sunday</td><td className="py-3 text-right">10:00 – 22:00</td></tr>
             </tbody>
           </table>
         </div>
       </section>
 
-      {/* Final CTA */}
       <section className="vaha-section relative overflow-hidden text-center">
-        <Image src="/images/bbq3.jpeg" alt="" fill className="object-cover brightness-[0.2]" sizes="100vw" />
+        <VahaReliableImage src={LANDING_IMAGES[0]} alt="" fill className="brightness-[0.2]" sizes="100vw" />
         <div className="absolute inset-0 bg-vaha-ink/70" aria-hidden="true" />
         <div className="vaha-container relative z-10">
           <h2 className="vaha-title mb-6">Join Us Tonight</h2>

@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import type { ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 
 /** Split headline: small caps eyebrow + large display title (Vaha pattern). */
 export function VahaHeadline({
@@ -24,10 +24,12 @@ export function VahaCta({
   href,
   children,
   variant = 'outline',
+  className = '',
 }: {
   href: string;
   children: ReactNode;
   variant?: 'outline' | 'solid';
+  className?: string;
 }) {
   const base =
     'inline-block border px-8 py-3 text-xs font-semibold uppercase tracking-[0.35em] transition-colors duration-300';
@@ -37,7 +39,7 @@ export function VahaCta({
       : 'border-vaha-gold/60 text-vaha-gold hover:bg-vaha-gold hover:text-vaha-ink';
 
   return (
-    <Link href={href} className={`${base} ${styles}`}>
+    <Link href={href} className={`${base} ${styles} ${className}`}>
       {children}
     </Link>
   );
@@ -83,7 +85,7 @@ export function VahaSplitSection({
     <section className="vaha-section bg-vaha-ink-soft">
       <div className={`vaha-container grid items-center gap-6 lg:grid-cols-2 lg:gap-8 ${reverse ? 'lg:[&>*:first-child]:order-2' : ''}`}>
         <div className="relative aspect-[4/5] overflow-hidden border border-white/10">
-          <Image src={imageSrc} alt={imageAlt} fill className="object-cover" sizes="(max-width: 1024px) 100vw, 50vw" />
+          <VahaReliableImage src={imageSrc} alt={imageAlt} fill sizes="(max-width: 1024px) 100vw, 50vw" />
           <div className="absolute inset-0 bg-gradient-to-t from-vaha-ink/50 to-transparent" aria-hidden="true" />
         </div>
         <div className="space-y-5">
@@ -111,13 +113,7 @@ export function VahaFeatureGrid({
           {items.map((item) => (
             <article key={item.label} className="group border border-white/10 bg-vaha-ink-soft p-4 md:p-5">
               <div className="relative mb-6 aspect-[16/10] overflow-hidden">
-                <Image
-                  src={item.image}
-                  alt=""
-                  fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-105"
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                />
+                <VahaReliableImage src={item.image} alt="" fill sizes="(max-width: 768px) 100vw, 50vw" className="transition-transform duration-700 group-hover:scale-105" />
               </div>
               <p className="vaha-eyebrow">{item.label}</p>
               <h3 className="mt-2 font-serif text-2xl text-vaha-cream md:text-3xl">{item.title}</h3>
@@ -160,4 +156,127 @@ export function VahaPageHero({
 
 export function VahaPageShell({ children }: { children: ReactNode }) {
   return <div className="bg-vaha-ink text-vaha-cream">{children}</div>;
+}
+
+/** Shared form + panel styles for account, cart, staff pages */
+export const vahaInputClass =
+  'min-h-11 w-full border border-white/15 bg-vaha-ink px-3 py-2 text-sm text-vaha-cream placeholder:text-vaha-muted/50 focus:border-vaha-gold focus:outline-none focus:ring-1 focus:ring-vaha-gold';
+
+export const vahaTextareaClass = `${vahaInputClass} min-h-24`;
+
+export function VahaPanel({
+  children,
+  className = '',
+  eyebrow,
+  title,
+  description,
+}: {
+  children?: ReactNode;
+  className?: string;
+  eyebrow?: string;
+  title?: string;
+  description?: string;
+}) {
+  return (
+    <section className={`border border-white/10 bg-vaha-ink-soft p-4 md:p-5 ${className}`}>
+      {eyebrow ? <p className="vaha-eyebrow mb-2">{eyebrow}</p> : null}
+      {title ? <h2 className="font-serif text-2xl text-vaha-cream md:text-3xl">{title}</h2> : null}
+      {description ? <p className="mt-2 text-sm text-vaha-muted md:text-base">{description}</p> : null}
+      {children}
+    </section>
+  );
+}
+
+export function VahaButton({
+  children,
+  type = 'button',
+  variant = 'solid',
+  disabled,
+  className = '',
+  onClick,
+}: {
+  children: ReactNode;
+  type?: 'button' | 'submit';
+  variant?: 'solid' | 'outline' | 'ghost';
+  disabled?: boolean;
+  className?: string;
+  onClick?: () => void;
+}) {
+  const base =
+    'inline-flex min-h-11 items-center justify-center border px-6 py-2 text-xs font-semibold uppercase tracking-[0.25em] transition-colors disabled:cursor-not-allowed disabled:opacity-50';
+  const styles =
+    variant === 'solid'
+      ? 'border-vaha-gold bg-vaha-gold text-vaha-ink hover:bg-white hover:border-white'
+      : variant === 'outline'
+        ? 'border-vaha-gold/60 text-vaha-gold hover:bg-vaha-gold hover:text-vaha-ink'
+        : 'border-transparent text-vaha-muted hover:text-vaha-gold';
+
+  return (
+    <button type={type} disabled={disabled} onClick={onClick} className={`${base} ${styles} ${className}`}>
+      {children}
+    </button>
+  );
+}
+
+export function VahaAlert({ tone, children }: { tone: 'error' | 'success' | 'info'; children: ReactNode }) {
+  const styles =
+    tone === 'error'
+      ? 'border-red-400/40 bg-red-950/40 text-red-100'
+      : tone === 'success'
+        ? 'border-green-400/40 bg-green-950/30 text-green-100'
+        : 'border-vaha-gold/30 bg-vaha-gold/5 text-vaha-cream';
+  return <p className={`border px-4 py-3 text-sm ${styles}`}>{children}</p>;
+}
+
+export function VahaLoading({ label = 'Loading…' }: { label?: string }) {
+  return (
+    <div className="flex min-h-[40vh] items-center justify-center">
+      <p className="vaha-eyebrow" role="status" aria-live="polite">
+        {label}
+      </p>
+    </div>
+  );
+}
+
+/** Landing / hero image with load validation and fresh mount per navigation */
+export function VahaReliableImage({
+  src,
+  alt,
+  fill,
+  priority,
+  className = '',
+  sizes,
+  aspectClassName,
+}: {
+  src: string;
+  alt: string;
+  fill?: boolean;
+  priority?: boolean;
+  className?: string;
+  sizes?: string;
+  aspectClassName?: string;
+}) {
+  const [status, setStatus] = useState<'loading' | 'loaded' | 'error'>('loading');
+
+  return (
+    <div className={aspectClassName || (fill ? 'absolute inset-0' : 'relative aspect-[16/10] w-full')}>
+      {status === 'error' ? (
+        <div className="flex h-full min-h-[12rem] items-center justify-center border border-red-400/30 bg-vaha-ink-soft p-4 text-center text-sm text-red-200">
+          Image unavailable: {src}
+        </div>
+      ) : (
+        <Image
+          key={src}
+          src={src}
+          alt={alt}
+          fill={fill}
+          priority={priority}
+          sizes={sizes}
+          className={`object-cover ${className} ${status === 'loading' ? 'opacity-0' : 'opacity-100'} transition-opacity duration-500`}
+          onLoad={() => setStatus('loaded')}
+          onError={() => setStatus('error')}
+        />
+      )}
+    </div>
+  );
 }

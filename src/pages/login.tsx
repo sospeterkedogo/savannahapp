@@ -3,6 +3,13 @@ import { useRouter } from 'next/router';
 import SocialLoginButtons from '../components/SocialLoginButtons';
 import { getFriendlyAuthError, getSafeNextPath } from '../lib/authRedirect';
 import { supabase } from '../lib/supabase';
+import {
+  VahaAlert,
+  VahaButton,
+  VahaPageShell,
+  VahaPanel,
+  vahaInputClass,
+} from '../components/vaha/VahaUI';
 
 export default function Login() {
   const router = useRouter();
@@ -18,13 +25,14 @@ export default function Login() {
     setError('');
     setLoading(true);
 
-    const { error: signInError } = mode === 'signin'
-      ? await supabase.auth.signInWithPassword({ email, password })
-      : await supabase.auth.signUp({
-          email,
-          password,
-          options: { data: { full_name: fullName } },
-        });
+    const { error: signInError } =
+      mode === 'signin'
+        ? await supabase.auth.signInWithPassword({ email, password })
+        : await supabase.auth.signUp({
+            email,
+            password,
+            options: { data: { full_name: fullName } },
+          });
 
     setLoading(false);
 
@@ -40,67 +48,46 @@ export default function Login() {
   const redirectPath = getSafeNextPath(router.query.redirect, '/profile');
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center bg-black pb-16 pt-8">
-      <section className="w-full max-w-md rounded-2xl border border-luxury-accent/30 bg-black/70 p-8 shadow-2xl" aria-labelledby="login-title">
-        <p className="mb-2 text-sm font-semibold uppercase tracking-[0.18em] text-luxury-accent/80">Customer account</p>
-        <h1 id="login-title" className="text-4xl font-serif font-bold text-luxury-accent">{mode === 'signin' ? 'Sign In' : 'Create Account'}</h1>
-        <p className="mt-3 text-sm text-white/70">Use your Savannah account for checkout, receipts, invoices, and profile details.</p>
+    <VahaPageShell>
+      <div className="vaha-container flex min-h-[70vh] items-center justify-center py-10">
+        <VahaPanel
+          className="w-full max-w-md"
+          eyebrow="Customer account"
+          title={mode === 'signin' ? 'Sign In' : 'Create Account'}
+          description="Use your Savannah account for checkout, receipts, and your customer dashboard."
+        >
+          <SocialLoginButtons context="customer" redirectTo={redirectPath} onError={setError} className="mt-6" />
 
-        <SocialLoginButtons context="customer" redirectTo={redirectPath} onError={setError} className="mt-6" />
+          <div className="mt-6 flex items-center gap-3 text-xs uppercase tracking-widest text-vaha-muted/60">
+            <span className="h-px flex-1 bg-white/10" />
+            <span>Email</span>
+            <span className="h-px flex-1 bg-white/10" />
+          </div>
 
-        <div className="mt-6 flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.16em] text-white/40">
-          <span className="h-px flex-1 bg-white/15" />
-          <span>Email</span>
-          <span className="h-px flex-1 bg-white/15" />
-        </div>
+          <div className="mt-4 flex gap-2">
+            <VahaButton variant={mode === 'signin' ? 'solid' : 'outline'} onClick={() => setMode('signin')}>
+              Sign In
+            </VahaButton>
+            <VahaButton variant={mode === 'create' ? 'solid' : 'outline'} onClick={() => setMode('create')}>
+              Create
+            </VahaButton>
+          </div>
 
-        <div className="mt-6 flex gap-3">
-          <button onClick={() => setMode('signin')} className={`rounded-full px-5 py-2 font-bold ${mode === 'signin' ? 'bg-luxury-accent text-black' : 'border border-white/30 text-white'}`}>Sign In</button>
-          <button onClick={() => setMode('create')} className={`rounded-full px-5 py-2 font-bold ${mode === 'create' ? 'bg-luxury-accent text-black' : 'border border-white/30 text-white'}`}>Create</button>
-        </div>
+          <form className="mt-6 flex flex-col gap-3" onSubmit={handleSubmit}>
+            {mode === 'create' ? (
+              <input className={vahaInputClass} value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Full name" aria-label="Full name" required />
+            ) : null}
+            <input className={vahaInputClass} value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" aria-label="Email" type="email" autoComplete="email" required />
+            <input className={vahaInputClass} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" aria-label="Password" type="password" autoComplete={mode === 'signin' ? 'current-password' : 'new-password'} required />
 
-        <form className="mt-8 flex flex-col gap-4" onSubmit={handleSubmit}>
-          {mode === 'create' && (
-            <label className="flex flex-col gap-2 text-sm font-semibold text-white/80">
-              Full name
-              <input
-                className="min-h-12 rounded-lg border border-luxury-accent/50 bg-black/40 px-4 py-3 text-white placeholder:text-white/50 focus:ring-2 focus:ring-luxury-accent"
-                value={fullName}
-                onChange={(event) => setFullName(event.target.value)}
-                required
-              />
-            </label>
-          )}
-          <label className="flex flex-col gap-2 text-sm font-semibold text-white/80">
-            Email
-            <input
-              className="min-h-12 rounded-lg border border-luxury-accent/50 bg-black/40 px-4 py-3 text-white placeholder:text-white/50 focus:ring-2 focus:ring-luxury-accent"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              type="email"
-              autoComplete="email"
-              required
-            />
-          </label>
-          <label className="flex flex-col gap-2 text-sm font-semibold text-white/80">
-            Password
-            <input
-              className="min-h-12 rounded-lg border border-luxury-accent/50 bg-black/40 px-4 py-3 text-white placeholder:text-white/50 focus:ring-2 focus:ring-luxury-accent"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              type="password"
-              autoComplete="current-password"
-              required
-            />
-          </label>
+            {error ? <VahaAlert tone="error">{error}</VahaAlert> : null}
 
-          {error && <p className="rounded-lg border border-red-400/50 bg-red-950/50 px-4 py-3 text-sm text-red-100">{error}</p>}
-
-          <button type="submit" disabled={loading} className="luxury-cta min-h-12 rounded-full bg-gradient-to-r from-luxury-accent to-yellow-400 px-8 py-3 text-lg font-bold text-black disabled:cursor-not-allowed disabled:opacity-60">
-            {loading ? 'Working...' : mode === 'signin' ? 'Sign In' : 'Create Account'}
-          </button>
-        </form>
-      </section>
-    </main>
+            <VahaButton type="submit" variant="solid" disabled={loading} className="w-full">
+              {loading ? 'Working…' : mode === 'signin' ? 'Sign In' : 'Create Account'}
+            </VahaButton>
+          </form>
+        </VahaPanel>
+      </div>
+    </VahaPageShell>
   );
 }

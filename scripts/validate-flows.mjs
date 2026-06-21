@@ -112,9 +112,25 @@ async function main() {
     .update({ price: '$10.99', description: 'Updated by validation' })
     .eq('id', testItemId);
   if (updateErr) fail('Update menu item', updateErr.message);
-  else pass('Staff update persisted');
+  else   pass('Staff update persisted');
 
-  // 5. Place two guest orders (direct DB — mirrors /api/orders logic)
+  // 4b. Verify update reflected in admin-style fetch (all items, including unavailable)
+  const { data: adminItems } = await admin.from('savannah_menu_items').select('price, description').eq('id', testItemId).single();
+  if (adminItems?.price === '$10.99' && adminItems?.description === 'Updated by validation') {
+    pass('Admin menu list would show updated price/description');
+  } else {
+    fail('Admin menu update reflection', JSON.stringify(adminItems));
+  }
+
+  // 4c. Customer profiles table reachable (dashboard uses this)
+  const { error: profileTableErr } = await admin.from('savannah_customer_profiles').select('id').limit(1);
+  if (profileTableErr) {
+    fail('Customer profiles table', profileTableErr.message);
+  } else {
+    pass('Customer dashboard profile table reachable');
+  }
+
+  // 5. Place two guest orders
   const cartItems = [
     {
       menuSlug: 'mainmenu',
