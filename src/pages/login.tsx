@@ -54,7 +54,7 @@ export default function Login() {
           className="w-full max-w-md"
           eyebrow="Customer account"
           title={mode === 'signin' ? 'Sign In' : 'Create Account'}
-          description="Use your Savannah account for checkout, receipts, and your customer dashboard."
+          description="Sign in to save your details and see past orders."
         >
           <SocialLoginButtons context="customer" redirectTo={redirectPath} onError={setError} className="mt-6" />
 

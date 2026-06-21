@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import {
   VahaCta,
   VahaFeatureGrid,
@@ -24,7 +23,7 @@ export default function Home() {
       <section className="relative flex min-h-screen flex-col justify-end overflow-hidden">
         <VahaReliableImage
           src={LANDING_IMAGES[0]}
-          alt="Savannah Bar and Grill dining room"
+          alt="Inside Savannah Bar and Grill"
           fill
           priority
           className="brightness-[0.4]"
@@ -33,76 +32,75 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-t from-vaha-ink via-vaha-ink/40 to-transparent" aria-hidden="true" />
 
         <div className="vaha-container relative z-10 pb-12 pt-24 md:pb-14">
-          <p className="vaha-eyebrow mb-6">Northampton &bull; Est. 2026</p>
+          <p className="vaha-eyebrow mb-6">Northampton</p>
           <h1 className="vaha-title-lg max-w-5xl">
             Savannah <span className="italic text-vaha-gold">Bar & Grill</span>
           </h1>
           <p className="mt-8 max-w-xl text-lg leading-relaxed text-vaha-muted md:text-xl">
-            Ambient dining, wood-fired cuisine, and signature cocktails in the heart of Wellingborough Road.
+            Good food from the grill, cold drinks, and a warm place to eat on Wellingborough Road.
           </p>
           <div className="mt-10 flex flex-wrap gap-4">
             <VahaCta href="/menu" variant="solid">
-              The Menu Library
+              See Menu
             </VahaCta>
-            <VahaCta href="/book">Reserve a Table</VahaCta>
+            <VahaCta href="/book">Book a Table</VahaCta>
           </div>
         </div>
       </section>
 
-      <VahaStoryBlock>
+      <VahaStoryBlock title="About Us">
         <p>
-          Savannah Bar & Grill is a new gastro-bar in the centre of Northampton, boasting an ambient dining
-          experience, an extensive bar selection, and the warmth of open-flame cooking.
+          Savannah is a restaurant and bar in the centre of Northampton. We serve grilled food, share plates, and drinks in a relaxed room.
         </p>
-        <p>Come along and experience something completely new.</p>
+        <p>We would love to see you. Walk in or book a table online.</p>
       </VahaStoryBlock>
 
       <VahaSplitSection
-        eyebrow="Unique Cuisine"
-        title="Check out Our Menus"
-        body="For those with pure food indulgence in mind, experience our grill-led menu inspired by global smoke-house traditions. We take inspiration from wood-fire technique, premium cuts, and seasonal produce to craft the Savannah signature."
-        cta="The Menu Library"
+        eyebrow="Food"
+        title="Our Menu"
+        body="Steaks, burgers, salads, and plates from our wood-fire grill. We use fresh ingredients and cook over open flame."
+        cta="See Menu"
         href="/menu"
         imageSrc={LANDING_IMAGES[1]}
-        imageAlt="Wood-fired grill at Savannah"
+        imageAlt="Food on the grill"
       />
 
       <VahaSplitSection
-        eyebrow="The perfect Pour"
-        title="Mixology Magic"
-        body="Savannah boasts an exciting beverages menu featuring cocktails crafted in-house. Our team discovers new flavour pairings and techniques to elevate the art of spirits — from Savannah Gold to classic martinis."
-        cta="Discover the Art of Mixology"
+        eyebrow="Drinks"
+        title="Bar & Cocktails"
+        body="Beer, wine, soft drinks, and house cocktails. Try Savannah Gold or ask our team for a recommendation."
+        cta="See Drinks"
         href="/menu/cocktail"
         imageSrc={LANDING_IMAGES[2]}
-        imageAlt="Cocktails at Savannah bar"
+        imageAlt="Drinks at the bar"
         reverse
       />
 
       <VahaFeatureGrid
-        sectionTitle="explore Our Space"
+        sectionTitle="Our Space"
         items={[
           {
-            label: 'The Dining Space',
-            title: 'Savannah Dining',
-            body: 'Soft ambient lighting and golden accents create intimacy for every occasion — from intimate dinners to celebrations with friends.',
+            label: 'Dining room',
+            title: 'Eat In',
+            body: 'Sit down with friends or family. Soft lighting and a calm room for lunch or dinner.',
             image: LANDING_IMAGES[3],
           },
           {
-            label: 'Quality Mixology',
-            title: 'Savannah Bar',
-            body: 'Impeccable mixology shines through every pour. From beautiful flavour pairings to immersive presentation, our bar is unmatched.',
+            label: 'The bar',
+            title: 'Drinks',
+            body: 'Pull up a stool for a pint, a glass of wine, or a cocktail before or after your meal.',
             image: LANDING_IMAGES[4],
           },
           {
-            label: 'Delicious Food',
-            title: 'The Grill',
-            body: 'Wood-fired flavour pushes through every bite of our signature dishes. Our kitchen team brings knowledge in taste, colour, and quality.',
+            label: 'The grill',
+            title: 'Fire Cooking',
+            body: 'Most of our mains are cooked over wood fire for a deep, smoky taste.',
             image: LANDING_IMAGES[5],
           },
           {
-            label: 'Our Legacy',
-            title: 'The Experience',
-            body: 'Crafted for those who appreciate real flavour — special selections, chef-driven menus, and world-class hospitality.',
+            label: 'Visit us',
+            title: 'Welcome',
+            body: 'We aim to make every visit easy and enjoyable — good food, fair prices, friendly staff.',
             image: LANDING_IMAGES[0],
           },
         ]}
@@ -111,8 +109,8 @@ export default function Home() {
       <section className="border-y border-white/10 bg-vaha-ink-soft py-10">
         <div className="vaha-container grid gap-8 md:grid-cols-2">
           <div>
-            <p className="vaha-eyebrow mb-4">Visit Us</p>
-            <h2 className="vaha-title-sm">Hours & Location</h2>
+            <p className="vaha-eyebrow mb-4">Find Us</p>
+            <h2 className="vaha-title-sm">Hours & Address</h2>
             <p className="mt-6 leading-relaxed text-vaha-muted">
               17 Wellingborough Road, Northampton, NN1 2AB
               <br />
@@ -136,12 +134,12 @@ export default function Home() {
         <VahaReliableImage src={LANDING_IMAGES[0]} alt="" fill className="brightness-[0.2]" sizes="100vw" />
         <div className="absolute inset-0 bg-vaha-ink/70" aria-hidden="true" />
         <div className="vaha-container relative z-10">
-          <h2 className="vaha-title mb-6">Join Us Tonight</h2>
+          <h2 className="vaha-title mb-6">Visit Tonight</h2>
           <p className="mx-auto mb-10 max-w-xl text-lg text-vaha-muted">
-            Secure your table and experience the best of Savannah Bar & Grill.
+            Book a table online in a few clicks.
           </p>
           <VahaCta href="/book" variant="solid">
-            Reserve Now
+            Book a Table
           </VahaCta>
         </div>
       </section>

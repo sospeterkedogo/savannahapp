@@ -7,7 +7,7 @@ const footerLinks = [
   { href: '/', label: 'Home' },
   { href: '/menu', label: 'Menu' },
   { href: '/info', label: 'About' },
-  { href: '/book', label: 'Reservations' },
+  { href: '/book', label: 'Book a Table' },
   { href: '/hours', label: 'Hours' },
   { href: '/events', label: 'Events' },
   { href: '/contact', label: 'Contact' },
@@ -24,7 +24,7 @@ export default function Footer() {
             <span className="font-serif text-2xl text-vaha-cream md:text-3xl">Savannah</span>
           </Link>
           <p className="mt-4 max-w-md text-sm leading-relaxed text-vaha-muted">
-            Ambient dining, wood-fired cuisine, and signature cocktails in Northampton.
+            Grilled food, cold drinks, and a warm welcome in Northampton.
           </p>
           <div className="mt-4 flex gap-4 text-lg text-vaha-muted">
             <a href="https://instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="hover:text-vaha-gold"><FaInstagram /></a>

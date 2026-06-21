@@ -1,1 +1,1 @@
-export { default } from '../admin/menu';
+export { default, getServerSideProps } from '../admin/menu';

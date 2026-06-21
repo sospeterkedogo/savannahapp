@@ -62,7 +62,7 @@ export default function Menu() {
     return (
       <VahaPageShell>
         <div className="flex min-h-[50vh] items-center justify-center">
-          <p className="vaha-eyebrow" role="status" aria-live="polite">Loading menu library…</p>
+          <p className="vaha-eyebrow" role="status" aria-live="polite">Loading menu…</p>
         </div>
       </VahaPageShell>
     );
@@ -71,9 +71,9 @@ export default function Menu() {
   return (
     <VahaPageShell>
       <VahaPageHero
-        eyebrow="Dining Menu"
-        title="Our Menu Library"
-        description="Modern dishes inspired by wood-fire gastronomy. Every category is curated for pure food indulgence."
+        eyebrow="Food & Drinks"
+        title="Our Menu"
+        description="Steaks, burgers, salads, and drinks. Pick a section to see what we serve."
         imageSrc="/images/bbq-p.jpg"
       />
 
@@ -86,7 +86,7 @@ export default function Menu() {
             <input
               id="menu-search"
               type="search"
-              placeholder="Search dishes or categories…"
+              placeholder="Search food or drinks…"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full border border-white/15 bg-vaha-ink px-4 py-3 text-vaha-cream placeholder:text-vaha-muted/50 focus:border-vaha-gold focus:outline-none focus:ring-1 focus:ring-vaha-gold"
@@ -131,7 +131,7 @@ export default function Menu() {
                       <p className="mt-5 text-sm italic text-vaha-muted/60">Coming soon</p>
                     )}
                     <p className="mt-6 text-xs font-semibold uppercase tracking-[0.3em] text-vaha-gold group-hover:text-vaha-cream">
-                      View Full Menu →
+                      See full menu →
                     </p>
                   </div>
                 </Link>
@@ -153,7 +153,7 @@ export default function Menu() {
 
           <div className="mt-16 border-t border-white/10 pt-12 text-center">
             <p className="text-sm text-vaha-muted">
-              We cater to dietary restrictions — contact us at least 24 hours before your booking.
+              Tell us about food allergies when you book — at least 24 hours ahead if you can.
             </p>
             <div className="mt-6">
               <VahaCta href="/book">Book a Table</VahaCta>

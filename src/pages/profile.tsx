@@ -165,9 +165,9 @@ export default function Profile() {
         )}
 
         <VahaPanel
-          eyebrow={role === 'admin' ? 'Administrator' : 'Customer dashboard'}
-          title="Account & Orders"
-          description="Manage your contact details and review Savannah receipts."
+          eyebrow={role === 'admin' ? 'Admin' : 'My account'}
+          title="My Account"
+          description="Update your details and view past orders."
         >
           <div className="mt-4 flex flex-wrap gap-3">
             <VahaButton variant="outline" onClick={signOut}>

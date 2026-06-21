@@ -4,9 +4,9 @@ export default function Hours() {
   return (
     <VahaPageShell>
       <VahaPageHero
-        eyebrow="Service Hours"
+        eyebrow="Hours"
         title="Opening Hours"
-        description="Join us for lunch, dinner, and weekend brunch service."
+        description="When we are open for food and drinks."
       />
 
       <section className="vaha-section bg-vaha-ink-soft">

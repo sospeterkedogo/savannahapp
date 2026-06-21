@@ -4,7 +4,7 @@ export const menuDetails = {
   mainmenu: {
     title: 'Main Menu',
     image: '/menudesigns/mainmenu.svg',
-    description: 'A curated selection of our signature dishes, appetizers, and mains.',
+    description: 'Our main dishes, starters, and sides.',
     items: [
       {
         name: 'Grilled Salmon with Lemon Butter Sauce',
@@ -107,7 +107,7 @@ export const menuDetails = {
   'more-cocktail': {
     title: 'More Cocktails',
     image: '/menudesigns/more-cocktail.svg',
-    description: 'Explore our extended cocktail list for every taste.',
+    description: 'Our full list of house cocktails and classics.',
     items: [
       { name: 'Espresso Martini', description: 'Vodka, coffee liqueur, and fresh espresso.', price: '$13' },
       { name: 'Aperol Spritz', description: 'Aperol, prosecco, and soda with orange.', price: '$11' },

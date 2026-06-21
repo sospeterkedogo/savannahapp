@@ -5,9 +5,9 @@ export default function Contact() {
   return (
     <VahaPageShell>
       <VahaPageHero
-        eyebrow="Get in Touch"
+        eyebrow="Contact"
         title="Contact Us"
-        description="We'd love to hear from you. Reach out with questions, feedback, or private hire enquiries."
+        description="Questions, feedback, or a private party? Send us a message."
       />
 
       <section className="vaha-section bg-vaha-ink-soft">

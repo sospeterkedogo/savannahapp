@@ -46,7 +46,7 @@ export function VahaCta({
 }
 
 export function VahaStoryBlock({
-  title = 'Explore Our Story',
+  title = 'Our Story',
   children,
 }: {
   title?: string;

@@ -25,9 +25,9 @@ export default function Events() {
       </Head>
 
       <VahaPageHero
-        eyebrow="News and Events"
-        title="Events & Updates"
-        description="Stay posted on live music, tasting evenings, and special offers at Savannah."
+        eyebrow="What's On"
+        title="Events"
+        description="Live music, special nights, and offers at Savannah."
         imageSrc="/images/bbq3.jpeg"
       />
 
@@ -66,7 +66,7 @@ export default function Events() {
                       <FaLocationDot className="text-vaha-gold" aria-hidden /> {event.location}
                     </p>
                     <p className="text-vaha-muted leading-relaxed">{event.description}</p>
-                    <VahaCta href="/book" variant="solid">RSVP / Book a Table</VahaCta>
+                    <VahaCta href="/book" variant="solid">Book a Table</VahaCta>
                   </div>
                 </article>
               ))}
@@ -74,9 +74,9 @@ export default function Events() {
           )}
 
           <div className="mt-20 border-t border-white/10 pt-12 text-center">
-            <p className="text-vaha-muted">Want to host a private event at Savannah?</p>
+            <p className="text-vaha-muted">Want to hire the room for a private event?</p>
             <div className="mt-6">
-              <VahaCta href="/contact">Inquire About Private Hire</VahaCta>
+              <VahaCta href="/contact">Contact Us</VahaCta>
             </div>
           </div>
         </div>

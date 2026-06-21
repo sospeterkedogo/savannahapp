@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { FaPalette } from 'react-icons/fa6';
+import { FaPalette, FaXmark } from 'react-icons/fa6';
 import { useCart } from '../lib/cart';
 import { supabase } from '../lib/supabase';
 import { useCurrentProfile } from '../lib/useCurrentProfile';
@@ -22,7 +22,7 @@ export default function Nav() {
   const { count } = useCart();
   const { theme, cycleTheme } = useTheme();
   const { loading: accountLoading, profile } = useCurrentProfile();
-  const themeLabel = theme.charAt(0).toUpperCase() + theme.slice(1);
+  const themeLabel = theme === 'light' ? 'Light' : 'Dark';
   const signedIn = Boolean(profile);
 
   useEffect(() => {
@@ -30,6 +30,14 @@ export default function Nav() {
     return () => {
       document.body.style.overflow = '';
     };
+  }, [open]);
+
+  useEffect(() => {
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') setOpen(false);
+    }
+    if (open) window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
   }, [open]);
 
   async function handleSignOut() {
@@ -64,7 +72,7 @@ export default function Nav() {
           </Link>
           {signedIn ? (
             <Link href="/profile" className="text-xs font-semibold uppercase tracking-[0.2em] text-vaha-muted hover:text-vaha-gold">
-              Account
+              My Account
             </Link>
           ) : (
             <Link href="/login" className="text-xs font-semibold uppercase tracking-[0.2em] text-vaha-muted hover:text-vaha-gold">
@@ -75,7 +83,7 @@ export default function Nav() {
             type="button"
             onClick={cycleTheme}
             className="grid h-8 w-8 place-items-center text-vaha-muted hover:text-vaha-gold"
-            aria-label={`Cycle theme. Current: ${themeLabel}`}
+            aria-label={`Change colour theme. Current: ${themeLabel}`}
           >
             <FaPalette className="text-sm" />
           </button>
@@ -83,47 +91,59 @@ export default function Nav() {
             href="/book"
             className="border border-vaha-gold bg-vaha-gold px-6 py-2 text-xs font-semibold uppercase tracking-[0.25em] text-vaha-ink transition-colors hover:border-white hover:bg-white"
           >
-            Reserve
+            Book a Table
           </Link>
         </div>
 
         <button
           type="button"
-          className="relative z-[120] flex flex-col gap-1.5 p-2 lg:hidden"
+          className="relative z-[120] flex flex-col items-center justify-center gap-1.5 p-2 lg:hidden"
           aria-label={open ? 'Close menu' : 'Open menu'}
           aria-expanded={open}
+          aria-controls="mobile-nav-drawer"
           onClick={() => setOpen((v) => !v)}
         >
-          <span className={`block h-0.5 w-6 bg-vaha-gold transition-transform ${open ? 'translate-y-2 rotate-45' : ''}`} />
-          <span className={`block h-0.5 w-6 bg-vaha-gold transition-opacity ${open ? 'opacity-0' : ''}`} />
-          <span className={`block h-0.5 w-4 bg-vaha-gold transition-transform ${open ? '-translate-y-2 -rotate-45 w-6' : ''}`} />
+          <span className={`block h-0.5 w-6 bg-vaha-gold transition-all duration-300 ${open ? 'translate-y-2 rotate-45' : ''}`} />
+          <span className={`block h-0.5 w-6 bg-vaha-gold transition-all duration-300 ${open ? 'scale-x-0 opacity-0' : ''}`} />
+          <span className={`block h-0.5 bg-vaha-gold transition-all duration-300 ${open ? 'w-6 -translate-y-2 -rotate-45' : 'w-4'}`} />
         </button>
       </nav>
 
       <div
-        className={`fixed inset-0 z-[110] bg-vaha-ink transition-opacity duration-300 lg:hidden ${open ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0'}`}
+        id="mobile-nav-drawer"
+        className={`fixed inset-0 z-[110] bg-vaha-ink/98 transition-opacity duration-300 lg:hidden ${open ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0'}`}
         role="dialog"
         aria-modal="true"
         aria-hidden={!open}
-        aria-label="Mobile navigation"
+        aria-label="Site menu"
+        onClick={closeMenu}
       >
-        <div className="vaha-container flex h-full flex-col pt-24 pb-8">
-          <p className="vaha-eyebrow mb-6">Navigation</p>
+        <div className="vaha-container flex h-full flex-col pt-20 pb-8" onClick={(e) => e.stopPropagation()}>
+          <div className="mb-4 flex items-center justify-between">
+            <p className="vaha-eyebrow">Site menu</p>
+            <button
+              type="button"
+              onClick={closeMenu}
+              className="flex h-11 w-11 items-center justify-center border border-white/15 text-vaha-cream hover:border-vaha-gold hover:text-vaha-gold"
+              aria-label="Close menu"
+            >
+              <FaXmark className="text-xl" />
+            </button>
+          </div>
 
           <div className="flex flex-1 flex-col gap-1 overflow-y-auto">
-            {[...navLinks, { href: '/cart', label: `Cart${count > 0 ? ` (${count})` : ''}` }].map((link, index) => (
+            {[...navLinks, { href: '/cart', label: `Cart${count > 0 ? ` (${count})` : ''}` }].map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 className="vaha-footer-link border-b border-white/5 py-3"
-                style={{ animationDelay: `${index * 40}ms` }}
                 onClick={closeMenu}
               >
                 {link.label}
               </Link>
             ))}
             <Link href="/book" className="vaha-footer-link py-3 text-vaha-gold" onClick={closeMenu}>
-              Reserve a Table
+              Book a Table
             </Link>
             {signedIn ? (
               <Link href="/profile" className="vaha-footer-link py-3" onClick={closeMenu}>
@@ -138,7 +158,7 @@ export default function Nav() {
 
           <div className="mt-6 flex items-center justify-between border-t border-white/10 pt-6">
             <div className="text-xs text-vaha-muted">
-              {accountLoading ? 'Checking account…' : signedIn ? profile?.email : 'Guest'}
+              {accountLoading ? 'Loading…' : signedIn ? profile?.email : 'Guest'}
               {signedIn ? (
                 <button type="button" onClick={handleSignOut} className="mt-2 block text-vaha-gold uppercase tracking-widest">
                   Sign out
@@ -149,7 +169,7 @@ export default function Nav() {
               type="button"
               onClick={cycleTheme}
               className="flex items-center gap-2 text-xs uppercase tracking-widest text-vaha-muted hover:text-vaha-gold"
-              aria-label={`Cycle theme. Current: ${themeLabel}`}
+              aria-label={`Change colour theme. Current: ${themeLabel}`}
             >
               <FaPalette /> {themeLabel}
             </button>
@@ -157,7 +177,7 @@ export default function Nav() {
 
           <div className="mt-6" onClick={closeMenu}>
             <VahaCta href="/book" variant="solid">
-              Reserve Now
+              Book Now
             </VahaCta>
           </div>
         </div>

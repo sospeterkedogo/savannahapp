@@ -59,6 +59,39 @@ async function main() {
   }
   pass(`Categories loaded (${categories.length})`);
 
+  const EXPECTED_SEED_SLUGS = ['mainmenu', 'steak', 'cocktail'];
+  for (const slug of EXPECTED_SEED_SLUGS) {
+    if (!categories.find((c) => c.slug === slug)) {
+      fail(`${slug} category exists`);
+      return;
+    }
+    pass(`${slug} category present`);
+  }
+
+  const { data: seededItems, error: seedErr } = await anon
+    .from('savannah_menu_items')
+    .select('id, name, menu_slug')
+    .eq('is_available', true);
+
+  if (seedErr) {
+    fail('Public menu seed read', seedErr.message);
+    return;
+  }
+  if (!seededItems || seededItems.length < 10) {
+    fail('Seeded menu items for /menu', `expected >= 10, got ${seededItems?.length ?? 0}`);
+    return;
+  }
+  pass(`Public /menu has ${seededItems.length} items (seed OK)`);
+
+  const seedNames = ['Grilled Salmon', 'Classic Cheeseburger', 'Savannah Gold', 'Sirloin Steak'];
+  for (const name of seedNames) {
+    if (!seededItems.some((i) => i.name === name)) {
+      fail('Seed item present', name);
+      return;
+    }
+  }
+  pass('Known seed items visible to customers');
+
   const mainmenu = categories.find((c) => c.slug === 'mainmenu');
   if (!mainmenu) {
     fail('mainmenu category exists');

@@ -93,7 +93,7 @@ export default function MenuDetail() {
       <VahaPageShell>
         <div className="vaha-section text-center">
           <h1 className="vaha-title-sm">Menu Not Found</h1>
-          <div className="mt-8"><VahaCta href="/menu">Back to Menu Library</VahaCta></div>
+          <div className="mt-8"><VahaCta href="/menu">Back to Menu</VahaCta></div>
         </div>
       </VahaPageShell>
     );
@@ -102,7 +102,7 @@ export default function MenuDetail() {
   return (
     <VahaPageShell>
       <VahaPageHero
-        eyebrow="Menu Library"
+        eyebrow="Menu"
         title={category.title}
         description={category.description}
         imageSrc={category.image_url || '/images/bbq-p.jpg'}
@@ -131,7 +131,7 @@ export default function MenuDetail() {
                     Cart{count > 0 ? ` (${count})` : ''}
                   </Link>
                   <Link href="/book" className="text-xs font-semibold uppercase tracking-widest text-vaha-muted hover:text-vaha-gold">
-                    Reserve instead
+                    Book a table instead
                   </Link>
                 </>
               ) : null}
@@ -202,7 +202,7 @@ export default function MenuDetail() {
           )}
 
           <div className="mt-12 text-center">
-            <VahaCta href="/menu">← Menu Library</VahaCta>
+            <VahaCta href="/menu">← Back to Menu</VahaCta>
           </div>
         </div>
       </section>

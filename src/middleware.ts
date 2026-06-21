@@ -17,6 +17,8 @@ export function middleware(request: NextRequest) {
     url.pathname.startsWith('/api') ||
     url.pathname.startsWith('/images') ||
     url.pathname.startsWith('/menudesigns') ||
+    url.pathname.startsWith('/admin') ||
+    url.pathname.startsWith('/auth') ||
     url.pathname === '/favicon.ico'
   ) {
     return NextResponse.next();

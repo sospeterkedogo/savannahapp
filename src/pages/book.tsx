@@ -96,7 +96,7 @@ export default function Book() {
     return (
       <VahaPageShell>
         <div className="vaha-container max-w-2xl py-10">
-          <VahaPanel eyebrow="Confirmed" title="Booking Confirmed!" description="We've reserved your table. A confirmation has been sent to your email.">
+          <VahaPanel eyebrow="Done" title="Table Booked!" description="Your table is saved. We sent a confirmation to your email.">
             <div className="mt-4 space-y-2 text-sm">
               <p><span className="text-vaha-muted">Confirmation:</span> {successBooking.receipt_number}</p>
               <p><span className="text-vaha-muted">Guest:</span> {successBooking.full_name}</p>
@@ -116,7 +116,7 @@ export default function Book() {
 
   return (
     <VahaPageShell>
-      <VahaPageHero eyebrow="Reservations" title="Reserve a Table" description="Secure your spot at Savannah Bar & Grill." imageSrc="/images/bbq3.jpeg" />
+      <VahaPageHero eyebrow="Book a Table" title="Book a Table" description="Pick a date and time. We will hold a table for you." imageSrc="/images/bbq3.jpeg" />
       <div className="vaha-container grid gap-6 py-8 lg:grid-cols-2">
         <VahaPanel title="Contact">
           <div className="mt-4 space-y-4 text-sm text-vaha-muted">
@@ -147,7 +147,7 @@ export default function Book() {
             ) : null}
             <textarea value={formData.notes} onChange={(e) => setFormData((p) => ({ ...p, notes: e.target.value }))} className={`${vahaInputClass} min-h-24`} placeholder="Special requests" aria-label="Notes" />
             <VahaButton type="submit" variant="solid" disabled={loading || availability?.available === false}>
-              {loading ? 'Confirming…' : 'Confirm Reservation'}
+              {loading ? 'Saving…' : 'Book Table'}
             </VahaButton>
           </form>
         </VahaPanel>
