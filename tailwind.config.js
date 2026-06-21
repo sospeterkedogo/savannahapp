@@ -6,11 +6,18 @@ module.exports = {
     extend: {
       colors: {
         luxury: {
-          bg: '#18181b', // deep charcoal
-          accent: '#d4af37', // gold
-          surface: '#f8f5f2', // off-white
-          primary: '#1e293b', // navy
-          secondary: '#14532d', // forest green
+          bg: '#18181b',
+          accent: '#d4af37',
+          surface: '#f8f5f2',
+          primary: '#1e293b',
+          secondary: '#14532d',
+        },
+        vaha: {
+          ink: '#0c0c0c',
+          'ink-soft': '#141414',
+          cream: '#f4efe6',
+          muted: 'rgba(244, 239, 230, 0.72)',
+          gold: '#c9a962',
         },
       },
       fontFamily: {

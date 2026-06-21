@@ -308,3 +308,28 @@ button, .btn {
 	background-color: var(--sav-bg-soft);
 	box-shadow: 0 10px 30px var(--sav-shadow);
 }
+
+/* Vaha Lounge–inspired layout system */
+.vaha-container {
+	@apply mx-auto w-full max-w-6xl px-6 md:px-10;
+}
+
+.vaha-section {
+	@apply py-20 md:py-28;
+}
+
+.vaha-eyebrow {
+	@apply text-xs font-semibold uppercase tracking-[0.45em] text-vaha-gold;
+}
+
+.vaha-title-lg {
+	@apply font-serif text-5xl font-normal leading-[1.05] tracking-tight text-vaha-cream md:text-7xl lg:text-8xl;
+}
+
+.vaha-title {
+	@apply font-serif text-4xl font-normal leading-tight tracking-tight text-vaha-cream md:text-5xl lg:text-6xl;
+}
+
+.vaha-title-sm {
+	@apply font-serif text-3xl font-normal leading-snug text-vaha-cream md:text-4xl;
+}

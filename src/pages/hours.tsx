@@ -1,20 +1,36 @@
+import { VahaPageHero, VahaPageShell } from '../components/vaha/VahaUI';
+
 export default function Hours() {
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center bg-black pb-16 pt-8">
-      <div className="bg-black/60 rounded-2xl shadow-2xl border border-luxury-accent/30 p-10 flex flex-col items-center max-w-xl w-full">
-        <h1 className="text-5xl font-serif font-bold text-luxury-accent mb-4 drop-shadow-lg">Opening Hours</h1>
-        <p className="mb-8 text-lg text-white/80 text-center">Check out our opening hours below.</p>
-        <div className="w-full mt-6">
-          <table className="w-full text-white/90 text-lg">
+    <VahaPageShell>
+      <VahaPageHero
+        eyebrow="Service Hours"
+        title="Opening Hours"
+        description="Join us for lunch, dinner, and weekend brunch service."
+      />
+
+      <section className="vaha-section bg-vaha-ink-soft">
+        <div className="vaha-container mx-auto max-w-lg">
+          <table className="w-full text-vaha-cream">
             <tbody>
-              <tr><td className="py-2">Monday - Thursday</td><td className="py-2 text-right">12:00 – 23:00</td></tr>
-              <tr><td className="py-2">Friday</td><td className="py-2 text-right">12:00 – 00:00</td></tr>
-              <tr><td className="py-2">Saturday</td><td className="py-2 text-right">10:00 – 00:00</td></tr>
-              <tr><td className="py-2">Sunday</td><td className="py-2 text-right">10:00 – 22:00</td></tr>
+              {[
+                ['Monday – Thursday', '12:00 – 23:00'],
+                ['Friday', '12:00 – 00:00'],
+                ['Saturday', '10:00 – 00:00'],
+                ['Sunday', '10:00 – 22:00'],
+              ].map(([day, hours]) => (
+                <tr key={day} className="border-b border-white/10">
+                  <td className="py-4 text-vaha-muted">{day}</td>
+                  <td className="py-4 text-right font-medium">{hours}</td>
+                </tr>
+              ))}
             </tbody>
           </table>
+          <p className="mt-10 text-center text-sm text-vaha-muted">
+            17 Wellingborough Road, Northampton, NN1 2AB
+          </p>
         </div>
-      </div>
-    </main>
+      </section>
+    </VahaPageShell>
   );
 }

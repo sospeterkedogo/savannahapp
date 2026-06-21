@@ -9,14 +9,10 @@ import { useTheme } from './ThemeContext';
 
 const navLinks = [
   { href: '/menu', label: 'Menu' },
-  { href: '/cart', label: 'Cart' },
-  { href: '/profile', label: 'Profile' },
-  { href: '/book', label: 'Book' },
-  { href: '/contact', label: 'Contact' },
+  { href: '/info', label: 'About' },
+  { href: '/events', label: 'Events' },
   { href: '/hours', label: 'Hours' },
-  { href: '/info', label: 'Info' },
-  { href: '/events', label: 'Events & Updates' },
-  { href: '/legal', label: 'Legal' },
+  { href: '/contact', label: 'Contact' },
 ];
 
 export default function Nav() {
@@ -26,8 +22,6 @@ export default function Nav() {
   const { loading: accountLoading, profile } = useCurrentProfile();
   const themeLabel = theme.charAt(0).toUpperCase() + theme.slice(1);
   const signedIn = Boolean(profile);
-  const accountLabel = accountLoading ? 'Checking account' : signedIn ? 'Signed in' : 'Guest';
-  const accountDetail = profile ? `${profile.email} (${profile.role})` : 'Not signed in';
 
   async function handleSignOut() {
     await supabase.auth.signOut();
@@ -35,142 +29,88 @@ export default function Nav() {
   }
 
   return (
-    <nav className="sticky top-0 z-[100] bg-black/40 backdrop-blur-xl flex items-center justify-between px-12 py-6 border-b border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.5)]">
-      <div className="flex items-center gap-4">
-        <Link href="/" aria-label="Savannah Home" className="transition-transform hover:scale-110">
-          <Image src="/images/logo.png" alt="Savannah Logo" width={44} height={44} className="rounded-full border border-luxury-accent/30" priority />
+    <header className="sticky top-0 z-[100] border-b border-white/10 bg-vaha-ink/90 backdrop-blur-md">
+      <nav className="vaha-container flex items-center justify-between py-5" aria-label="Main">
+        <Link href="/" className="flex items-center gap-3" aria-label="Savannah Home">
+          <Image src="/images/logo.png" alt="" width={40} height={40} className="rounded-full border border-vaha-gold/30" priority />
+          <span className="font-serif text-xl tracking-wide text-vaha-cream md:text-2xl">Savannah</span>
         </Link>
-        <div className="flex flex-col -gap-1">
-          <span className="font-serif text-2xl text-luxury-accent font-bold tracking-[0.2em] uppercase leading-none">Savannah</span>
-          <span className="text-[10px] text-white/40 tracking-[0.4em] uppercase font-semibold">Fine Dining</span>
-        </div>
-      </div>
 
-      <div className="hidden xl:flex gap-8 items-center">
-        {navLinks.slice(0, 5).map(link => (
-          <Link key={link.href} href={link.href} className="text-sm font-medium uppercase tracking-[0.15em] text-white/80 hover:text-luxury-accent transition-all duration-300">
-            {link.label}{link.href === '/cart' && count > 0 ? ` [${count}]` : ''}
+        <div className="hidden items-center gap-8 lg:flex">
+          {navLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="text-xs font-semibold uppercase tracking-[0.2em] text-vaha-muted transition-colors hover:text-vaha-gold"
+            >
+              {link.label}
+            </Link>
+          ))}
+          <Link href="/cart" className="text-xs font-semibold uppercase tracking-[0.2em] text-vaha-muted hover:text-vaha-gold">
+            Cart{count > 0 ? ` (${count})` : ''}
           </Link>
-        ))}
-        
-        <div className="h-4 w-px bg-white/10 mx-2" />
+          <button
+            type="button"
+            onClick={cycleTheme}
+            className="grid h-8 w-8 place-items-center text-vaha-muted hover:text-vaha-gold"
+            aria-label={`Cycle theme. Current: ${themeLabel}`}
+          >
+            <FaPalette className="text-sm" />
+          </button>
+          <Link
+            href="/book"
+            className="border border-vaha-gold bg-vaha-gold px-6 py-2 text-xs font-semibold uppercase tracking-[0.25em] text-vaha-ink transition-colors hover:bg-white hover:border-white"
+          >
+            Reserve
+          </Link>
+        </div>
 
         <button
           type="button"
-          onClick={cycleTheme}
-          className="group relative grid h-9 w-9 place-items-center rounded-full border border-white/10 text-white/60 hover:border-luxury-accent hover:text-luxury-accent transition-all"
-          aria-label={`Cycle theme. Current theme: ${themeLabel}`}
+          className="flex flex-col gap-1.5 p-2 lg:hidden"
+          aria-label={open ? 'Close menu' : 'Open menu'}
+          aria-expanded={open}
+          onClick={() => setOpen((v) => !v)}
         >
-          <FaPalette className="text-sm" />
-          <span className="pointer-events-none absolute -bottom-10 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-black/90 px-2 py-1 text-[10px] font-semibold text-white opacity-0 shadow-xl transition-opacity group-hover:opacity-100">
-            {themeLabel}
-          </span>
+          <span className="block h-0.5 w-6 bg-vaha-gold" />
+          <span className="block h-0.5 w-6 bg-vaha-gold" />
+          <span className="block h-0.5 w-4 bg-vaha-gold" />
         </button>
+      </nav>
 
-        <div className="flex flex-col items-end leading-none mr-2">
-          <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-luxury-accent/70 mb-1">{accountLabel}</span>
-          <span className="max-w-[120px] truncate text-[11px] text-white/50" title={accountDetail}>{profile?.email || 'GUEST'}</span>
-        </div>
-
-        <Link href="/book" className="px-8 py-2.5 bg-luxury-accent text-black rounded-full font-bold text-xs uppercase tracking-widest hover:bg-white transition-all duration-300 shadow-[0_0_15px_rgba(197,160,89,0.2)]">
-          Reserve
-        </Link>
-      </div>
-      {/* Hamburger Button - visible until the full nav has room */}
-      <button
-        className={`xl:hidden flex flex-col gap-1.5 p-2 focus:outline-none focus:ring-2 focus:ring-luxury-accent transition-transform ${open ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
-        aria-label="Open menu"
-        onClick={() => setOpen(true)}
-        style={{ zIndex: 60 }}
-      >
-        <span className="block w-7 h-1 bg-luxury-accent rounded transition-all"></span>
-        <span className="block w-7 h-1 bg-luxury-accent rounded transition-all"></span>
-        <span className="block w-7 h-1 bg-luxury-accent rounded transition-all"></span>
-      </button>
-      {/* Mobile Nav Drawer - only rendered when open */}
-      {open && (
-        <div
-          className="fixed inset-0 z-[110] pointer-events-auto "
-          aria-hidden={!open}
-        >
-          {/* Overlay */}
-          <div
-            className="absolute inset-0 transition-opacity  opacity-100"
-            onClick={() => setOpen(false)}
-          />
-          {/* Drawer */}
-          <aside
-            className="absolute right-0 top-0 h-full w-full sm:w-[480px]  border-l border-white flex flex-col p-12 shadow-2xl transition-transform duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] translate-x-0"
-          >
-            <button
-              className="self-end text-white/40 hover:text-luxury-accent transition-colors text-4xl font-light"
-              aria-label="Close menu"
-              onClick={() => setOpen(false)}
-            >
+      {open ? (
+        <div className="fixed inset-0 z-[110] bg-vaha-ink/95 lg:hidden" role="dialog" aria-modal="true" aria-label="Mobile navigation">
+          <div className="vaha-container flex h-full flex-col py-8">
+            <button type="button" className="self-end text-3xl text-vaha-muted" onClick={() => setOpen(false)} aria-label="Close">
               ×
             </button>
-            
-            <nav className="flex flex-col gap-6 mt-12 bg-accent">
-              {navLinks.map(link => (
-                <Link 
-                  key={link.href} 
-                  href={link.href} 
-                  className="text-4xl font-serif text-white hover:text-luxury-accent transition-colors"
+            <div className="mt-8 flex flex-1 flex-col gap-6">
+              {[...navLinks, { href: '/cart', label: `Cart${count > 0 ? ` (${count})` : ''}` }, { href: '/book', label: 'Reserve' }].map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="font-serif text-3xl text-vaha-cream hover:text-vaha-gold"
                   onClick={() => setOpen(false)}
                 >
-                  {link.label}{link.href === '/cart' && count > 0 ? ` [${count}]` : ''}
+                  {link.label}
                 </Link>
               ))}
-            </nav>
-
-            <div className="mt-auto flex flex-col gap-8 bg-accent">
-              <div className="h-px bg-white/5 w-full" />
-              
-              <div className="flex flex-col gap-2">
-                <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-luxury-accent/70">{accountLabel}</p>
-                <p className="text-white/50 font-light">{profile?.email || 'GUEST'}</p>
-              </div>
-
-              <div className="flex flex-col gap-4">
-                {signedIn ? (
-                  <button
-                    type="button"
-                    onClick={handleSignOut}
-                    className="w-full rounded-full border border-white/10 py-4 text-xs font-bold uppercase tracking-widest text-white hover:border-luxury-accent hover:text-luxury-accent"
-                  >
-                    Sign Out
-                  </button>
-                ) : (
-                  <Link 
-                    href="/login" 
-                    className="w-full rounded-full border border-luxury-accent/50 py-4 text-center text-xs font-bold uppercase tracking-widest text-luxury-accent hover:bg-luxury-accent hover:text-black"
-                    onClick={() => setOpen(false)}
-                  >
-                    Sign In
-                  </Link>
-                )}
-                
-                <button
-                  type="button"
-                  onClick={cycleTheme}
-                  className="w-full flex items-center justify-center gap-3 rounded-full bg-white/5 py-4 text-xs font-bold uppercase tracking-widest text-white hover:bg-white/10"
-                >
-                  <FaPalette className="text-sm" />
-                  Theme: {themeLabel}
-                </button>
-
-                <Link 
-                  href="/book" 
-                  className="w-full rounded-full bg-luxury-accent py-5 text-center text-sm font-bold uppercase tracking-widest text-black shadow-2xl"
-                  onClick={() => setOpen(false)}
-                >
-                  Reserve Now
-                </Link>
-              </div>
             </div>
-          </aside>
+            <div className="border-t border-white/10 pt-6 text-sm text-vaha-muted">
+              {accountLoading ? 'Checking account…' : signedIn ? profile?.email : 'Guest'}
+              {signedIn ? (
+                <button type="button" onClick={handleSignOut} className="mt-4 block text-vaha-gold uppercase tracking-widest text-xs">
+                  Sign out
+                </button>
+              ) : (
+                <Link href="/login" className="mt-4 block text-vaha-gold uppercase tracking-widest text-xs" onClick={() => setOpen(false)}>
+                  Sign in
+                </Link>
+              )}
+            </div>
+          </div>
         </div>
-      )}
-    </nav>
+      ) : null}
+    </header>
   );
 }

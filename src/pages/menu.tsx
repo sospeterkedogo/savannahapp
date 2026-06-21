@@ -1,43 +1,10 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { fetchAllPublicMenuItems, fetchMenuCategories } from '../lib/menuItems';
+import { VahaCta, VahaPageHero, VahaPageShell } from '../components/vaha/VahaUI';
 import type { DbMenuItem, DbMenuCategory } from '../types/app';
 import { supabase } from '../lib/supabase';
-
-const DESIGNS = [
-  {
-    container: "border-2 border-luxury-accent/40 bg-black/40 p-8 flex flex-col items-center text-center",
-    title: "text-3xl font-serif text-luxury-accent mb-6 border-b border-luxury-accent/30 pb-2 w-full",
-    item: "flex flex-col mb-4 w-full",
-    itemName: "text-lg font-serif text-white",
-    itemDesc: "text-xs text-white/60 italic",
-    itemPrice: "text-sm font-bold text-luxury-accent mt-1"
-  },
-  {
-    container: "border border-luxury-accent/30 bg-gradient-to-br from-black/60 to-luxury-accent/5 p-8 flex flex-col items-start",
-    title: "text-4xl font-serif text-luxury-accent mb-8 italic self-center",
-    item: "flex justify-between items-baseline mb-3 w-full border-b border-white/10 pb-1",
-    itemName: "text-base font-medium text-white",
-    itemDesc: "hidden",
-    itemPrice: "text-base font-serif text-luxury-accent ml-4"
-  },
-  {
-    container: "border-4 border-double border-luxury-accent/50 bg-black/80 p-8 flex flex-col",
-    title: "text-2xl font-bold uppercase tracking-widest text-luxury-accent mb-6 text-center bg-luxury-accent/10 py-1",
-    item: "flex flex-col mb-5 items-center text-center",
-    itemName: "text-xl font-serif text-luxury-accent/90",
-    itemDesc: "text-sm text-white/70 max-w-[200px]",
-    itemPrice: "text-sm font-bold text-white mt-1"
-  },
-  {
-    container: "border border-white/20 bg-black/40 p-6 flex flex-col rounded-3xl",
-    title: "text-3xl font-serif text-white mb-6 pl-4 border-l-4 border-luxury-accent",
-    item: "flex flex-col mb-4 last:mb-0 bg-white/5 p-3 rounded-xl",
-    itemName: "text-base font-bold text-luxury-accent",
-    itemDesc: "text-xs text-white/80 mt-1",
-    itemPrice: "text-sm font-mono text-white/90 mt-2 self-end"
-  }
-];
 
 export default function Menu() {
   const [items, setItems] = useState<DbMenuItem[]>([]);
@@ -47,33 +14,25 @@ export default function Menu() {
 
   useEffect(() => {
     const loadData = () => {
-      Promise.all([
-        fetchAllPublicMenuItems(),
-        fetchMenuCategories()
-      ]).then(([itemsData, categoriesData]) => {
-        setItems(itemsData);
-        setCategories(categoriesData);
-        setLoading(false);
-      }).catch(() => {
-        setLoading(false);
-      });
+      Promise.all([fetchAllPublicMenuItems(), fetchMenuCategories()])
+        .then(([itemsData, categoriesData]) => {
+          setItems(itemsData);
+          setCategories(categoriesData);
+          setLoading(false);
+        })
+        .catch(() => setLoading(false));
     };
 
     loadData();
 
-    // Subscribe to changes
     const itemsSubscription = supabase
       .channel('public:savannah_menu_items')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'savannah_menu_items' }, () => {
-        loadData();
-      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'savannah_menu_items' }, loadData)
       .subscribe();
 
     const categoriesSubscription = supabase
       .channel('public:savannah_menu_categories')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'savannah_menu_categories' }, () => {
-        loadData();
-      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'savannah_menu_categories' }, loadData)
       .subscribe();
 
     return () => {
@@ -82,123 +41,126 @@ export default function Menu() {
     };
   }, []);
 
-  const categorizedData = categories.map((category) => {
-    const categoryItems = items.filter(item => item.menu_slug === category.slug);
-    const filteredItems = categoryItems.filter(item => 
-      item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.description.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-
-    return {
-      ...category,
-      items: filteredItems,
-      totalInCategory: categoryItems.length
-    };
-  }).filter(category => {
-    if (searchQuery) {
-      return category.items.length > 0 || category.title.toLowerCase().includes(searchQuery.toLowerCase());
-    }
-    return true;
-  });
+  const categorizedData = categories
+    .map((category) => {
+      const categoryItems = items.filter((item) => item.menu_slug === category.slug);
+      const filteredItems = categoryItems.filter(
+        (item) =>
+          item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          item.description.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      return { ...category, items: filteredItems, totalInCategory: categoryItems.length };
+    })
+    .filter((category) => {
+      if (searchQuery) {
+        return category.items.length > 0 || category.title.toLowerCase().includes(searchQuery.toLowerCase());
+      }
+      return true;
+    });
 
   if (loading) {
     return (
-      <main className="min-h-screen flex flex-col items-center justify-center bg-black pb-16 pt-8">
-        <p className="animate-pulse text-luxury-accent text-2xl font-serif uppercase tracking-widest" role="status" aria-live="polite">Crafting Menus...</p>
-      </main>
+      <VahaPageShell>
+        <div className="flex min-h-[50vh] items-center justify-center">
+          <p className="vaha-eyebrow" role="status" aria-live="polite">Loading menu library…</p>
+        </div>
+      </VahaPageShell>
     );
   }
 
   return (
-    <main className="min-h-screen flex flex-col items-center bg-black pb-24 pt-12 px-4">
-      <div className="max-w-4xl text-center mb-8 luxury-fade-in">
-        <h1 className="text-6xl md:text-7xl font-serif font-bold text-luxury-accent mb-6 drop-shadow-2xl">The Savannah Collection</h1>
-        <div className="w-24 h-1 bg-luxury-accent mx-auto mb-8"></div>
-        <p className="text-xl text-white/80 font-light leading-relaxed">Experience culinary excellence through our curated categories. Every dish tells a story of flavor and passion.</p>
-      </div>
+    <VahaPageShell>
+      <VahaPageHero
+        eyebrow="Dining Menu"
+        title="Our Menu Library"
+        description="Modern dishes inspired by wood-fire gastronomy. Every category is curated for pure food indulgence."
+        imageSrc="/images/bbq-p.jpg"
+      />
 
-      <div className="w-full max-w-2xl mb-16 relative luxury-fade-in">
-        <label htmlFor="menu-search" className="sr-only">Search menu items</label>
-        <input
-          id="menu-search"
-          type="search"
-          placeholder="Search for a dish, ingredient, or category..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full h-14 bg-white/5 border border-luxury-accent/30 rounded-full px-8 text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-luxury-accent/50 transition-all text-lg"
-        />
-        <div className="absolute right-6 top-1/2 -translate-y-1/2 text-luxury-accent/70" aria-hidden="true">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-12 w-full max-w-[1600px]">
-        {categorizedData.length > 0 ? categorizedData.map((category, index) => {
-          const design = DESIGNS[index % DESIGNS.length];
-          return (
-            <Link
-              key={category.slug}
-              href={`/menu/${category.slug}`}
-              aria-label={`View full ${category.title} menu`}
-              className={`group luxury-card relative overflow-hidden transition-all duration-500 hover:ring-2 hover:ring-luxury-accent/50 ${design.container} min-h-[500px]`}
-            >
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-luxury-accent/40 to-transparent transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700"></div>
-              
-              <h2 className={design.title}>{category.title}</h2>
-              
-              <div className="flex-1 w-full flex flex-col justify-center">
-                {category.items.length > 0 ? (
-                  <div className="w-full">
-                    {category.items.slice(0, 4).map((item) => (
-                      <div key={item.id} className={design.item}>
-                        <div className="flex justify-between items-start w-full">
-                           <span className={design.itemName}>{item.name}</span>
-                           {design.itemPrice && !design.itemPrice.includes('self-end') && <span className={design.itemPrice}>{item.price}</span>}
-                        </div>
-                        {item.description && <p className={design.itemDesc}>{item.description}</p>}
-                        {design.itemPrice && design.itemPrice.includes('self-end') && <span className={design.itemPrice}>{item.price}</span>}
-                      </div>
-                    ))}
-                    {category.totalInCategory > 4 && (
-                      <p className="text-center text-luxury-accent/60 text-xs mt-4 uppercase tracking-widest">+ {category.totalInCategory - 4} More specialties</p>
-                    )}
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center justify-center opacity-40 py-12">
-                    <span className="text-4xl mb-4 italic font-serif text-white">Coming soon</span>
-                    <div className="w-12 h-px bg-white/30"></div>
-                  </div>
-                )}
-              </div>
-
-              <div className="mt-8 pt-6 border-t border-luxury-accent/10 w-full text-center">
-                <span className="text-sm font-bold uppercase tracking-[0.2em] text-luxury-accent group-hover:text-white transition-colors">
-                  View Full Menu
-                </span>
-              </div>
-            </Link>
-          );
-        }) : (
-          <div className="col-span-full flex flex-col items-center justify-center py-24 text-center">
-             <span className="text-6xl font-serif text-white/20 mb-8 italic">0 Items Found</span>
-             <p className="text-white/60 text-xl max-w-md mb-12">We couldn't find any dishes matching "{searchQuery}".</p>
-             <div className="p-8 border border-luxury-accent/20 bg-white/5 rounded-2xl max-w-lg">
-                <h3 className="text-luxury-accent font-bold uppercase tracking-widest mb-4">Instructions to add items</h3>
-                <ol className="text-white/70 text-left list-decimal list-inside space-y-3">
-                  <li>Navigate to the <Link href="/admin/menu" className="text-luxury-accent underline hover:text-white">Admin Menu Dashboard</Link>.</li>
-                  <li>Click on <span className="text-white font-bold">"New Item"</span> or <span className="text-white font-bold">"Categories"</span> to create a selection.</li>
-                  <li>Ensure <span className="text-white font-bold">"Available on public menu"</span> is checked.</li>
-                  <li>The live menu will update instantly across the site.</li>
-                </ol>
-             </div>
-             <button onClick={() => setSearchQuery('')} className="mt-12 text-luxury-accent hover:underline uppercase tracking-widest font-bold">
-               Clear Search & View All
-             </button>
+      <section className="vaha-section bg-vaha-ink-soft">
+        <div className="vaha-container">
+          <div className="mx-auto mb-12 max-w-xl">
+            <label htmlFor="menu-search" className="vaha-eyebrow mb-3 block">
+              Search
+            </label>
+            <input
+              id="menu-search"
+              type="search"
+              placeholder="Search dishes or categories…"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full border border-white/15 bg-vaha-ink px-4 py-3 text-vaha-cream placeholder:text-vaha-muted/50 focus:border-vaha-gold focus:outline-none focus:ring-1 focus:ring-vaha-gold"
+            />
           </div>
-        )}
-      </div>
-    </main>
+
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {categorizedData.length > 0 ? (
+              categorizedData.map((category) => (
+                <Link
+                  key={category.slug}
+                  href={`/menu/${category.slug}`}
+                  aria-label={`View ${category.title} menu`}
+                  className="group border border-white/10 bg-vaha-ink transition-colors hover:border-vaha-gold/40"
+                >
+                  {category.image_url ? (
+                    <div className="relative aspect-[16/10] overflow-hidden">
+                      <Image
+                        src={category.image_url}
+                        alt=""
+                        fill
+                        className="object-cover transition-transform duration-700 group-hover:scale-105"
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                        unoptimized={category.image_url.endsWith('.svg')}
+                      />
+                    </div>
+                  ) : null}
+                  <div className="p-6">
+                    <p className="vaha-eyebrow">{category.slug.replace(/-/g, ' ')}</p>
+                    <h2 className="mt-2 font-serif text-2xl text-vaha-cream">{category.title}</h2>
+                    <p className="mt-3 line-clamp-2 text-sm text-vaha-muted">{category.description}</p>
+                    {category.items.length > 0 ? (
+                      <ul className="mt-5 space-y-2 border-t border-white/10 pt-4 text-sm text-vaha-muted">
+                        {category.items.slice(0, 3).map((item) => (
+                          <li key={item.id} className="flex justify-between gap-2">
+                            <span>{item.name}</span>
+                            <span className="shrink-0 text-vaha-gold">{item.price}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="mt-5 text-sm italic text-vaha-muted/60">Coming soon</p>
+                    )}
+                    <p className="mt-6 text-xs font-semibold uppercase tracking-[0.3em] text-vaha-gold group-hover:text-vaha-cream">
+                      View Full Menu →
+                    </p>
+                  </div>
+                </Link>
+              ))
+            ) : (
+              <div className="col-span-full border border-white/10 p-12 text-center">
+                <p className="vaha-title-sm text-vaha-muted/40">No items found</p>
+                <p className="mt-4 text-vaha-muted">No dishes match &ldquo;{searchQuery}&rdquo;.</p>
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  className="mt-8 text-xs font-semibold uppercase tracking-[0.3em] text-vaha-gold hover:underline"
+                >
+                  Clear search
+                </button>
+              </div>
+            )}
+          </div>
+
+          <div className="mt-16 border-t border-white/10 pt-12 text-center">
+            <p className="text-sm text-vaha-muted">
+              We cater to dietary restrictions — contact us at least 24 hours before your booking.
+            </p>
+            <div className="mt-6">
+              <VahaCta href="/book">Book a Table</VahaCta>
+            </div>
+          </div>
+        </div>
+      </section>
+    </VahaPageShell>
   );
 }
