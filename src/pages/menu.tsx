@@ -1,43 +1,97 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import type { GetServerSideProps } from 'next';
 import { useEffect, useState } from 'react';
 import { fetchAllPublicMenuItems, fetchMenuCategories } from '../lib/menuItems';
-import { VahaCta, VahaPageHero, VahaPageShell } from '../components/vaha/VahaUI';
+import { createPublicSupabaseClient, getSupabase } from '../lib/supabase';
+import { VahaAlert, VahaCta, VahaPageHero, VahaPageShell } from '../components/vaha/VahaUI';
 import type { DbMenuItem, DbMenuCategory } from '../types/app';
-import { supabase } from '../lib/supabase';
 
-export default function Menu() {
-  const [items, setItems] = useState<DbMenuItem[]>([]);
-  const [categories, setCategories] = useState<DbMenuCategory[]>([]);
-  const [loading, setLoading] = useState(true);
+type MenuPageProps = {
+  initialItems: DbMenuItem[];
+  initialCategories: DbMenuCategory[];
+  loadError: string | null;
+};
+
+export const getServerSideProps: GetServerSideProps<MenuPageProps> = async () => {
+  try {
+    const client = createPublicSupabaseClient();
+    const [initialItems, initialCategories] = await Promise.all([
+      fetchAllPublicMenuItems(client),
+      fetchMenuCategories(client),
+    ]);
+    return {
+      props: {
+        initialItems,
+        initialCategories,
+        loadError: initialCategories.length === 0 ? 'Menu could not be loaded. Please refresh.' : null,
+      },
+    };
+  } catch (error) {
+    console.error('Menu page SSR load failed:', error);
+    return {
+      props: {
+        initialItems: [],
+        initialCategories: [],
+        loadError: 'Menu could not be loaded. Please refresh.',
+      },
+    };
+  }
+};
+
+export default function Menu({ initialItems, initialCategories, loadError }: MenuPageProps) {
+  const [items, setItems] = useState(initialItems);
+  const [categories, setCategories] = useState(initialCategories);
+  const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState(loadError);
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    const loadData = () => {
-      Promise.all([fetchAllPublicMenuItems(), fetchMenuCategories()])
-        .then(([itemsData, categoriesData]) => {
-          setItems(itemsData);
-          setCategories(categoriesData);
-          setLoading(false);
-        })
-        .catch(() => setLoading(false));
-    };
+    setItems(initialItems);
+    setCategories(initialCategories);
+    setError(loadError);
+  }, [initialItems, initialCategories, loadError]);
 
-    loadData();
+  useEffect(() => {
+    let cancelled = false;
 
-    const itemsSubscription = supabase
+    async function refreshMenu() {
+      setRefreshing(true);
+      try {
+        const [itemsData, categoriesData] = await Promise.all([
+          fetchAllPublicMenuItems(),
+          fetchMenuCategories(),
+        ]);
+        if (cancelled) return;
+        setItems(itemsData);
+        setCategories(categoriesData);
+        setError(categoriesData.length === 0 ? 'Menu could not be loaded. Please refresh.' : null);
+      } catch {
+        if (!cancelled) setError('Menu could not be loaded. Please refresh.');
+      } finally {
+        if (!cancelled) setRefreshing(false);
+      }
+    }
+
+    const client = getSupabase();
+    const itemsSubscription = client
       .channel('public:savannah_menu_items')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'savannah_menu_items' }, loadData)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'savannah_menu_items' }, () => {
+        void refreshMenu();
+      })
       .subscribe();
 
-    const categoriesSubscription = supabase
+    const categoriesSubscription = client
       .channel('public:savannah_menu_categories')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'savannah_menu_categories' }, loadData)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'savannah_menu_categories' }, () => {
+        void refreshMenu();
+      })
       .subscribe();
 
     return () => {
-      supabase.removeChannel(itemsSubscription);
-      supabase.removeChannel(categoriesSubscription);
+      cancelled = true;
+      void client.removeChannel(itemsSubscription);
+      void client.removeChannel(categoriesSubscription);
     };
   }, []);
 
@@ -58,16 +112,6 @@ export default function Menu() {
       return true;
     });
 
-  if (loading) {
-    return (
-      <VahaPageShell>
-        <div className="flex min-h-[50vh] items-center justify-center">
-          <p className="vaha-eyebrow" role="status" aria-live="polite">Loading menu…</p>
-        </div>
-      </VahaPageShell>
-    );
-  }
-
   return (
     <VahaPageShell>
       <VahaPageHero
@@ -79,6 +123,17 @@ export default function Menu() {
 
       <section className="vaha-section bg-vaha-ink-soft">
         <div className="vaha-container">
+          {error ? (
+            <div className="mb-6">
+              <VahaAlert tone="error">{error}</VahaAlert>
+            </div>
+          ) : null}
+          {refreshing ? (
+            <p className="vaha-eyebrow mb-4" role="status" aria-live="polite">
+              Updating menu…
+            </p>
+          ) : null}
+
           <div className="mb-6 max-w-xl">
             <label htmlFor="menu-search" className="vaha-eyebrow mb-3 block">
               Search
@@ -139,14 +194,22 @@ export default function Menu() {
             ) : (
               <div className="col-span-full border border-white/10 p-12 text-center">
                 <p className="vaha-title-sm text-vaha-muted/40">No items found</p>
-                <p className="mt-4 text-vaha-muted">No dishes match &ldquo;{searchQuery}&rdquo;.</p>
-                <button
-                  type="button"
-                  onClick={() => setSearchQuery('')}
-                  className="mt-8 text-xs font-semibold uppercase tracking-[0.3em] text-vaha-gold hover:underline"
-                >
-                  Clear search
-                </button>
+                <p className="mt-4 text-vaha-muted">
+                  {searchQuery ? (
+                    <>No dishes match &ldquo;{searchQuery}&rdquo;.</>
+                  ) : (
+                    <>Menu is empty right now. Please check back soon.</>
+                  )}
+                </p>
+                {searchQuery ? (
+                  <button
+                    type="button"
+                    onClick={() => setSearchQuery('')}
+                    className="mt-8 text-xs font-semibold uppercase tracking-[0.3em] text-vaha-gold hover:underline"
+                  >
+                    Clear search
+                  </button>
+                ) : null}
               </div>
             )}
           </div>

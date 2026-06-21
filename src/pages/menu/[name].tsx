@@ -1,58 +1,125 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { FormEvent, useEffect, useState } from 'react';
 import { fetchMenuCategories, fetchPublicMenuItems } from '../../lib/menuItems';
+import { createPublicSupabaseClient, getSupabase } from '../../lib/supabase';
 import { useCart } from '../../lib/cart';
-import { VahaCta, VahaPageHero, VahaPageShell } from '../../components/vaha/VahaUI';
+import { VahaAlert, VahaCta, VahaPageHero, VahaPageShell } from '../../components/vaha/VahaUI';
 import type { DbMenuCategory, MenuItem, MenuSlug } from '../../types/app';
-import { supabase } from '../../lib/supabase';
 
 const fieldClass =
   'min-h-11 border border-white/15 bg-vaha-ink px-3 py-2 text-sm text-vaha-cream placeholder:text-vaha-muted/50 focus:border-vaha-gold focus:outline-none focus:ring-1 focus:ring-vaha-gold';
 
-export default function MenuDetail() {
+type MenuDetailProps = {
+  slug: string;
+  initialCategory: DbMenuCategory | null;
+  initialItems: MenuItem[];
+  loadError: string | null;
+};
+
+export const getServerSideProps: GetServerSideProps<MenuDetailProps> = async (context) => {
+  const raw = context.params?.name;
+  const slug = (Array.isArray(raw) ? raw[0] : raw) as MenuSlug | undefined;
+
+  if (!slug) {
+    return { notFound: true };
+  }
+
+  try {
+    const client = createPublicSupabaseClient();
+    const [categories, items] = await Promise.all([
+      fetchMenuCategories(client),
+      fetchPublicMenuItems(slug, client),
+    ]);
+    const category = categories.find((entry) => entry.slug === slug) || null;
+
+    if (!category) {
+      return { notFound: true };
+    }
+
+    return {
+      props: {
+        slug,
+        initialCategory: category,
+        initialItems: items,
+        loadError: null,
+      },
+    };
+  } catch (error) {
+    console.error(`Menu detail SSR load failed for ${slug}:`, error);
+    return {
+      props: {
+        slug,
+        initialCategory: null,
+        initialItems: [],
+        loadError: 'Menu could not be loaded. Please refresh.',
+      },
+    };
+  }
+};
+
+export default function MenuDetail({ slug, initialCategory, initialItems, loadError }: MenuDetailProps) {
   const router = useRouter();
-  const { name } = router.query;
-  const slug = (Array.isArray(name) ? name[0] : name) as string;
-  const [category, setCategory] = useState<DbMenuCategory | null>(null);
-  const [items, setItems] = useState<MenuItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [category, setCategory] = useState<DbMenuCategory | null>(initialCategory);
+  const [items, setItems] = useState<MenuItem[]>(initialItems);
+  const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState(loadError);
   const [addedItem, setAddedItem] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const { addItem, count } = useCart();
 
   useEffect(() => {
-    if (!slug) return;
+    setCategory(initialCategory);
+    setItems(initialItems);
+    setError(loadError);
+  }, [initialCategory, initialItems, loadError, slug]);
 
-    const loadData = () => {
-      setLoading(true);
-      Promise.all([fetchMenuCategories(), fetchPublicMenuItems(slug)])
-        .then(([categories, nextItems]) => {
-          setCategory(categories.find((c) => c.slug === slug) || null);
-          setItems(nextItems);
-          setLoading(false);
-        })
-        .catch(() => setLoading(false));
-    };
+  useEffect(() => {
+    if (!router.isReady || !slug) return;
 
-    loadData();
+    let cancelled = false;
 
-    const itemsSubscription = supabase
+    async function refreshMenu() {
+      setRefreshing(true);
+      try {
+        const [categories, nextItems] = await Promise.all([
+          fetchMenuCategories(),
+          fetchPublicMenuItems(slug as MenuSlug),
+        ]);
+        if (cancelled) return;
+        setCategory(categories.find((entry) => entry.slug === slug) || null);
+        setItems(nextItems);
+        setError(null);
+      } catch {
+        if (!cancelled) setError('Menu could not be loaded. Please refresh.');
+      } finally {
+        if (!cancelled) setRefreshing(false);
+      }
+    }
+
+    const client = getSupabase();
+    const itemsSubscription = client
       .channel(`public:savannah_menu_items:${slug}`)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'savannah_menu_items', filter: `menu_slug=eq.${slug}` }, loadData)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'savannah_menu_items', filter: `menu_slug=eq.${slug}` }, () => {
+        void refreshMenu();
+      })
       .subscribe();
 
-    const categoriesSubscription = supabase
+    const categoriesSubscription = client
       .channel(`public:savannah_menu_categories:${slug}`)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'savannah_menu_categories', filter: `slug=eq.${slug}` }, loadData)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'savannah_menu_categories', filter: `slug=eq.${slug}` }, () => {
+        void refreshMenu();
+      })
       .subscribe();
 
     return () => {
-      supabase.removeChannel(itemsSubscription);
-      supabase.removeChannel(categoriesSubscription);
+      cancelled = true;
+      void client.removeChannel(itemsSubscription);
+      void client.removeChannel(categoriesSubscription);
     };
-  }, [slug]);
+  }, [router.isReady, slug]);
 
   const filteredItems = items.filter(
     (item) =>
@@ -78,7 +145,7 @@ export default function MenuDetail() {
     setAddedItem(item.name);
   }
 
-  if (loading) {
+  if (!router.isReady && !category) {
     return (
       <VahaPageShell>
         <div className="flex min-h-[40vh] items-center justify-center">
@@ -88,11 +155,16 @@ export default function MenuDetail() {
     );
   }
 
-  if (!category || !slug) {
+  if (!category) {
     return (
       <VahaPageShell>
         <div className="vaha-section text-center">
           <h1 className="vaha-title-sm">Menu Not Found</h1>
+          {error ? (
+            <div className="mx-auto mt-6 max-w-md">
+              <VahaAlert tone="error">{error}</VahaAlert>
+            </div>
+          ) : null}
           <div className="mt-8"><VahaCta href="/menu">Back to Menu</VahaCta></div>
         </div>
       </VahaPageShell>
@@ -110,6 +182,17 @@ export default function MenuDetail() {
 
       <section className="vaha-section bg-vaha-ink-soft" aria-labelledby="items-title">
         <div className="vaha-container">
+          {error ? (
+            <div className="mb-6">
+              <VahaAlert tone="error">{error}</VahaAlert>
+            </div>
+          ) : null}
+          {refreshing ? (
+            <p className="vaha-eyebrow mb-4" role="status" aria-live="polite">
+              Updating menu…
+            </p>
+          ) : null}
+
           <div className="mb-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
             <div>
               <p className="vaha-eyebrow">Order Online</p>
