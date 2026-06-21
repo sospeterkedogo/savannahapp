@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { createClient } from '@supabase/supabase-js';
 import { makeDocumentNumber } from '../../lib/orderDocuments';
+import { SITE_FROM_EMAIL } from '../../lib/siteContact';
 import type { SavannahBooking } from '../../types/app';
 
 type BookingRequest = {
@@ -67,7 +68,7 @@ async function sendBookingConfirmationEmail(booking: SavannahBooking) {
   if (!email) return;
 
   const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.RESEND_FROM_EMAIL || 'Savannah Bar & Grill <onboarding@resend.dev>';
+  const from = process.env.RESEND_FROM_EMAIL || SITE_FROM_EMAIL;
 
   if (!apiKey) return;
 

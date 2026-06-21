@@ -131,7 +131,7 @@ export type AuthProfile = {
   role: UserRole;
 };
 
-export type Theme = 'midnight' | 'light' | 'obsidian' | 'nebula' | 'solar' | 'relux';
+export type Theme = 'dark' | 'light';
 
 export type ThemeContextValue = {
   theme: Theme;

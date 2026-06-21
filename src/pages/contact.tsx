@@ -1,4 +1,5 @@
 import { VahaPageHero, VahaPageShell } from '../components/vaha/VahaUI';
+import { SITE_HELLO_EMAIL, SITE_INFO_EMAIL } from '../lib/siteContact';
 
 export default function Contact() {
   return (
@@ -46,8 +47,12 @@ export default function Contact() {
           </form>
           <p className="mt-10 text-center text-sm text-vaha-muted">
             Or email{' '}
-            <a href="mailto:info@savannah.com" className="text-vaha-gold hover:underline">
-              info@savannah.com
+            <a href={`mailto:${SITE_INFO_EMAIL}`} className="text-vaha-gold hover:underline">
+              {SITE_INFO_EMAIL}
+            </a>
+            {' '}or{' '}
+            <a href={`mailto:${SITE_HELLO_EMAIL}`} className="text-vaha-gold hover:underline">
+              {SITE_HELLO_EMAIL}
             </a>
           </p>
         </div>

@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { FaInstagram, FaFacebookF, FaXTwitter } from './HighEndIcons';
+import { SITE_HELLO_EMAIL, SITE_INFO_EMAIL } from '../lib/siteContact';
 
 const footerLinks = [
   { href: '/', label: 'Home' },
@@ -53,7 +54,9 @@ export default function Footer() {
         17 Wellingborough Road, Northampton, NN1 2AB &bull;{' '}
         <a href="tel:+44234567890" className="text-vaha-gold hover:underline">+44 234 567 890</a>
         {' '}&bull;{' '}
-        <a href="mailto:info@savannah.com" className="hover:underline">info@savannah.com</a>
+        <a href={`mailto:${SITE_INFO_EMAIL}`} className="hover:underline">{SITE_INFO_EMAIL}</a>
+        {' '}&bull;{' '}
+        <a href={`mailto:${SITE_HELLO_EMAIL}`} className="hover:underline">{SITE_HELLO_EMAIL}</a>
       </address>
     </footer>
   );

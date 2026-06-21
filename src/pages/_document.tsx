@@ -2,7 +2,7 @@ import { Html, Head, Main, NextScript } from 'next/document';
 
 export default function Document() {
   return (
-    <Html lang="en">
+    <Html lang="en" data-theme="dark">
       <Head>
         <meta name="color-scheme" content="dark" />
         <script
@@ -11,11 +11,11 @@ export default function Document() {
 try {
   var theme = localStorage.getItem('savannah-theme');
   if (theme) {
-    document.documentElement.setAttribute('data-theme', theme);
-    var scheme = theme === 'light' || theme === 'solar' ? 'light' : 'dark';
-    document.documentElement.style.colorScheme = scheme;
+    var normalized = theme === 'light' || theme === 'solar' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', normalized);
+    document.documentElement.style.colorScheme = normalized;
     var meta = document.querySelector('meta[name="color-scheme"]');
-    if (meta) meta.setAttribute('content', scheme);
+    if (meta) meta.setAttribute('content', normalized);
   }
 } catch (error) {}
 `,

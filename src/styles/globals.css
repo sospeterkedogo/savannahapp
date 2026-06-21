@@ -80,19 +80,24 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-	--sav-bg: #18181b;
-	--sav-bg-soft: rgba(0, 0, 0, 0.6);
-	--sav-bg-panel: rgba(0, 0, 0, 0.72);
-	--sav-bg-strong: rgba(0, 0, 0, 0.9);
-	--sav-surface: #f8f5f2;
-	--sav-text: rgba(255, 255, 255, 0.92);
-	--sav-text-soft: rgba(255, 255, 255, 0.72);
-	--sav-text-muted: rgba(255, 255, 255, 0.62);
-	--sav-accent: #d4af37;
-	--sav-accent-2: #facc15;
-	--sav-accent-text: #050505;
-	--sav-border: rgba(212, 175, 55, 0.32);
+:root,
+[data-theme="dark"] {
+	--sav-bg: #0c0c0c;
+	--sav-bg-soft: #141414;
+	--sav-bg-panel: #141414;
+	--sav-bg-strong: #0c0c0c;
+	--sav-surface: #f4efe6;
+	--sav-text: #f4efe6;
+	--sav-text-soft: rgba(244, 239, 230, 0.85);
+	--sav-text-muted: rgba(244, 239, 230, 0.72);
+	--vaha-bg: #0c0c0c;
+	--vaha-bg-soft: #141414;
+	--vaha-text: #f4efe6;
+	--vaha-text-muted: rgba(244, 239, 230, 0.72);
+	--sav-accent: #c9a962;
+	--sav-accent-2: #d4af37;
+	--sav-accent-text: #0c0c0c;
+	--sav-border: rgba(201, 169, 98, 0.32);
 	--sav-shadow: rgba(0, 0, 0, 0.45);
 	color-scheme: dark;
 	accent-color: var(--sav-accent);
@@ -100,91 +105,23 @@
 
 [data-theme="light"] {
 	--sav-bg: #fbfaf7;
-	--sav-bg-soft: rgba(255, 255, 255, 0.82);
-	--sav-bg-panel: rgba(255, 255, 255, 0.9);
-	--sav-bg-strong: rgba(245, 241, 232, 0.96);
-	--sav-surface: #1f2933;
-	--sav-text: rgba(31, 41, 51, 0.94);
-	--sav-text-soft: rgba(31, 41, 51, 0.68);
-	--sav-text-muted: rgba(31, 41, 51, 0.5);
-	--sav-accent: #9a6b14;
-	--sav-accent-2: #d89a20;
-	--sav-accent-text: #fffdf7;
-	--sav-border: rgba(154, 107, 20, 0.26);
-	--sav-shadow: rgba(72, 58, 31, 0.15);
+	--sav-bg-soft: #f3efe6;
+	--sav-bg-panel: #f3efe6;
+	--sav-bg-strong: #fbfaf7;
+	--sav-text: #1a1a1a;
+	--sav-text-soft: rgba(26, 26, 26, 0.85);
+	--sav-text-muted: rgba(26, 26, 26, 0.62);
+	--vaha-bg: #fbfaf7;
+	--vaha-bg-soft: #f3efe6;
+	--vaha-text: #1a1a1a;
+	--vaha-text-muted: rgba(26, 26, 26, 0.62);
 	color-scheme: light;
-}
-
-[data-theme="obsidian"] {
-	--sav-bg: #000000;
-	--sav-bg-soft: rgba(8, 8, 8, 0.72);
-	--sav-bg-panel: rgba(5, 5, 5, 0.88);
-	--sav-bg-strong: rgba(0, 0, 0, 0.96);
-	--sav-surface: #f5f5f5;
-	--sav-text: rgba(255, 255, 255, 0.9);
-	--sav-text-soft: rgba(255, 255, 255, 0.62);
-	--sav-text-muted: rgba(255, 255, 255, 0.42);
-	--sav-accent: #34d399;
-	--sav-accent-2: #a7f3d0;
-	--sav-accent-text: #00150d;
-	--sav-border: rgba(52, 211, 153, 0.28);
-	color-scheme: dark;
-}
-
-[data-theme="nebula"] {
-	--sav-bg: #100d26;
-	--sav-bg-soft: rgba(18, 14, 46, 0.74);
-	--sav-bg-panel: rgba(22, 18, 58, 0.86);
-	--sav-bg-strong: rgba(12, 9, 31, 0.94);
-	--sav-surface: #fff7ff;
-	--sav-text: rgba(255, 255, 255, 0.93);
-	--sav-text-soft: rgba(255, 255, 255, 0.68);
-	--sav-text-muted: rgba(255, 255, 255, 0.48);
-	--sav-accent: #ec4899;
-	--sav-accent-2: #a78bfa;
-	--sav-accent-text: #fff7fb;
-	--sav-border: rgba(236, 72, 153, 0.3);
-	color-scheme: dark;
-}
-
-[data-theme="solar"] {
-	--sav-bg: #fdf6e3;
-	--sav-bg-soft: rgba(238, 232, 213, 0.78);
-	--sav-bg-panel: rgba(253, 246, 227, 0.9);
-	--sav-bg-strong: rgba(238, 232, 213, 0.96);
-	--sav-surface: #4f5f63;
-	--sav-text: rgba(79, 95, 99, 0.95);
-	--sav-text-soft: rgba(79, 95, 99, 0.68);
-	--sav-text-muted: rgba(79, 95, 99, 0.5);
-	--sav-accent: #cb4b16;
-	--sav-accent-2: #b58900;
-	--sav-accent-text: #fff7e6;
-	--sav-border: rgba(181, 137, 0, 0.3);
-	--sav-shadow: rgba(79, 63, 24, 0.15);
-	color-scheme: light;
-}
-
-[data-theme="relux"] {
-	--sav-bg: #050505;
-	--sav-bg-soft: rgba(10, 10, 10, 0.8);
-	--sav-bg-panel: rgba(15, 15, 15, 0.85);
-	--sav-bg-strong: rgba(5, 5, 5, 0.95);
-	--sav-surface: #ffffff;
-	--sav-text: #f0f0f0;
-	--sav-text-soft: #cccccc;
-	--sav-text-muted: #888888;
-	--sav-accent: #c5a059; /* Bronze Gold */
-	--sav-accent-2: #e5c17b;
-	--sav-accent-text: #0a0a0a;
-	--sav-border: rgba(197, 160, 89, 0.4);
-	--sav-shadow: rgba(0, 0, 0, 0.8);
-	color-scheme: dark;
 }
 
 html {
 	font-family: var(--font-sans), system-ui, sans-serif;
 	background: var(--sav-bg);
-	color: var(--sav-surface);
+	color: var(--sav-text);
 	font-size: 16px;
 	line-height: 1.55;
 }
@@ -336,4 +273,27 @@ button, .btn {
 
 .vaha-title-sm {
 	@apply font-serif text-3xl font-normal leading-snug text-vaha-cream md:text-4xl;
+}
+
+/* Theme: background + text only (accents/gold unchanged) */
+[data-theme] .bg-vaha-ink,
+[data-theme] [class*="bg-vaha-ink"] {
+	background-color: var(--vaha-bg) !important;
+}
+
+[data-theme] .bg-vaha-ink-soft,
+[data-theme] [class*="bg-vaha-ink-soft"] {
+	background-color: var(--vaha-bg-soft) !important;
+}
+
+[data-theme] .text-vaha-cream,
+[data-theme] .vaha-title-lg,
+[data-theme] .vaha-title,
+[data-theme] .vaha-title-sm,
+[data-theme] .vaha-footer-link {
+	color: var(--vaha-text) !important;
+}
+
+[data-theme] .text-vaha-muted {
+	color: var(--vaha-text-muted) !important;
 }

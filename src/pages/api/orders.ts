@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { createClient } from '@supabase/supabase-js';
 import { buildReceiptText, formatCurrency, lineTotal, makeDocumentNumber, orderTotal } from '../../lib/orderDocuments';
+import { SITE_FROM_EMAIL } from '../../lib/siteContact';
 import type { CartItem, CheckoutLocation, CustomerProfile, OrderEmailResult, PlacedOrderResult, SavannahOrder } from '../../types/app';
 
 type OrderRequest = {
@@ -90,7 +91,7 @@ async function sendReceiptEmail(order: SavannahOrder): Promise<OrderEmailResult>
   }
 
   const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.RESEND_FROM_EMAIL || 'Savannah Bar & Grill <onboarding@resend.dev>';
+  const from = process.env.RESEND_FROM_EMAIL || SITE_FROM_EMAIL;
 
   if (!apiKey) {
     return { attempted: false, sent: false, message: 'Receipt email is queued in the order record, but email delivery is not configured.' };
