@@ -1,7 +1,6 @@
 import { FormEvent, useEffect, useState } from 'react';
 import type { GetServerSideProps } from 'next';
 import Link from 'next/link';
-import { supabase } from '../../lib/supabase';
 import { useAuthGuard } from '../../lib/useAuthGuard';
 import {
   fetchShifts,
@@ -11,6 +10,8 @@ import {
   fetchStaffProfiles,
 } from '../../lib/shifts';
 import type { SavannahShift, ShiftInput } from '../../types/app';
+import { StaffAccessDenied, StaffLoading, StaffPageHeader, StaffShell } from '../../components/staff/StaffLayout';
+import { VahaAlert, VahaButton, VahaPanel, vahaInputClass } from '../../components/vaha/VahaUI';
 
 export const getServerSideProps: GetServerSideProps = async () => {
   return { props: {} };
@@ -21,9 +22,6 @@ type StaffProfileShort = {
   full_name: string;
   role: string;
 };
-
-const inputClass =
-  'min-h-11 rounded-lg border border-luxury-accent/40 bg-black/40 px-3 py-2 text-sm text-white placeholder:text-white/45 focus:ring-2 focus:ring-luxury-accent';
 
 export default function ShiftsPage() {
   const { loading: authLoading, profile, allowed } = useAuthGuard(['admin', 'employee']);
@@ -51,7 +49,7 @@ export default function ShiftsPage() {
       ]);
       setShifts(shiftsData);
       setStaff(staffData);
-    } catch (err) {
+    } catch {
       setError('Failed to load shifts.');
     } finally {
       setLoading(false);
@@ -79,20 +77,14 @@ export default function ShiftsPage() {
 
       if (form.id) {
         await updateShift(form.id, input);
-        setMessage('Shift updated successfully.');
+        setMessage('Shift updated.');
       } else {
         await createShift(input);
-        setMessage('Shift scheduled successfully.');
+        setMessage('Shift scheduled.');
       }
-      setForm({
-        user_id: '',
-        role: 'Server',
-        start_time: '',
-        end_time: '',
-        status: 'scheduled',
-      });
+      setForm({ user_id: '', role: 'Server', start_time: '', end_time: '', status: 'scheduled' });
       await loadData();
-    } catch (err) {
+    } catch {
       setError('Failed to save shift.');
     } finally {
       setSaving(false);
@@ -100,174 +92,98 @@ export default function ShiftsPage() {
   }
 
   async function handleDelete(id: string) {
-    if (!confirm('Are you sure you want to delete this shift?')) return;
+    if (!confirm('Delete this shift?')) return;
     try {
       await deleteShift(id);
       setMessage('Shift deleted.');
       await loadData();
-    } catch (err) {
+    } catch {
       setError('Failed to delete shift.');
     }
   }
 
-  if (authLoading) return <div className="min-h-screen bg-black text-white p-8">Loading...</div>;
-  if (!allowed) return <div className="min-h-screen bg-black text-white p-8">Access Denied</div>;
+  if (authLoading) return <StaffLoading />;
+
+  if (!allowed) return <StaffAccessDenied showLogin={false} />;
 
   return (
-    <main className="min-h-screen bg-black pb-16 pt-8 text-white">
-      <div className="mx-auto max-w-[1700px] px-4 md:px-8">
-        <header className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-end">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-widest text-luxury-accent">Operations</p>
-            <h1 className="text-4xl font-serif font-bold text-luxury-accent">Staff Shifts</h1>
-          </div>
-          <Link href="/staff" className="rounded-full border border-luxury-accent/50 px-6 py-2 text-sm font-bold text-luxury-accent hover:bg-luxury-accent hover:text-black">
-            Back to Dashboard
-          </Link>
-        </header>
+    <StaffShell>
+      <div className="vaha-container flex flex-col gap-4 py-6">
+        <StaffPageHeader
+          eyebrow="Operations"
+          title="Staff Shifts"
+          actions={
+            <Link href="/staff" className="text-xs uppercase tracking-widest text-vaha-gold hover:underline">
+              Back to Dashboard
+            </Link>
+          }
+        />
 
-        {error && <p className="mb-4 rounded-lg bg-red-900/50 p-4 text-red-200">{error}</p>}
-        {message && <p className="mb-4 rounded-lg bg-green-900/50 p-4 text-green-200">{message}</p>}
+        {error ? <VahaAlert tone="error">{error}</VahaAlert> : null}
+        {message ? <VahaAlert tone="success">{message}</VahaAlert> : null}
 
-        <div className="grid gap-8 lg:grid-cols-[350px_1fr]">
-          <section className="rounded-2xl border border-luxury-accent/20 bg-black/60 p-6 shadow-xl">
-            <h2 className="mb-6 text-xl font-serif font-bold text-luxury-accent">{form.id ? 'Edit Shift' : 'Schedule Shift'}</h2>
-            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-              <label className="flex flex-col gap-2 text-sm font-semibold">
-                Staff Member
-                <select 
-                  className={inputClass} 
-                  value={form.user_id} 
-                  onChange={e => setForm({...form, user_id: e.target.value})}
-                  required
-                >
-                  <option value="">Select Staff</option>
-                  {staff.map(s => (
-                    <option key={s.id} value={s.id}>{s.full_name} ({s.role})</option>
-                  ))}
-                </select>
-              </label>
-
-              <label className="flex flex-col gap-2 text-sm font-semibold">
-                Role
-                <input 
-                  className={inputClass} 
-                  value={form.role} 
-                  onChange={e => setForm({...form, role: e.target.value})} 
-                  placeholder="e.g. Server, Chef"
-                  required 
-                />
-              </label>
-
-              <label className="flex flex-col gap-2 text-sm font-semibold">
-                Start Time
-                <input 
-                  type="datetime-local" 
-                  className={inputClass} 
-                  value={form.start_time?.slice(0, 16)} 
-                  onChange={e => setForm({...form, start_time: new Date(e.target.value).toISOString()})} 
-                  required 
-                />
-              </label>
-
-              <label className="flex flex-col gap-2 text-sm font-semibold">
-                End Time
-                <input 
-                  type="datetime-local" 
-                  className={inputClass} 
-                  value={form.end_time?.slice(0, 16)} 
-                  onChange={e => setForm({...form, end_time: new Date(e.target.value).toISOString()})} 
-                  required 
-                />
-              </label>
-
-              <label className="flex flex-col gap-2 text-sm font-semibold">
-                Status
-                <select 
-                  className={inputClass} 
-                  value={form.status} 
-                  onChange={e => setForm({...form, status: e.target.value as SavannahShift['status']})}
-                >
-                  <option value="scheduled">Scheduled</option>
-                  <option value="completed">Completed</option>
-                  <option value="cancelled">Cancelled</option>
-                </select>
-              </label>
-
-              <div className="mt-4 flex gap-2">
-                <button 
-                  type="submit" 
-                  disabled={saving}
-                  className="flex-1 rounded-full bg-luxury-accent py-3 font-bold text-black transition-opacity hover:opacity-90 disabled:opacity-50"
-                >
-                  {saving ? 'Saving...' : form.id ? 'Update' : 'Schedule'}
-                </button>
-                {form.id && (
-                  <button 
-                    type="button" 
-                    onClick={() => setForm({user_id: '', role: 'Server', start_time: '', end_time: '', status: 'scheduled'})}
-                    className="flex-1 rounded-full border border-white/20 py-3 font-bold hover:bg-white/10"
-                  >
+        <div className="grid gap-4 lg:grid-cols-[minmax(0,340px)_1fr]">
+          <VahaPanel title={form.id ? 'Edit Shift' : 'Schedule Shift'}>
+            <form onSubmit={handleSubmit} className="mt-4 grid gap-3">
+              <select className={vahaInputClass} value={form.user_id} onChange={(e) => setForm({ ...form, user_id: e.target.value })} required aria-label="Staff member">
+                <option value="">Select staff</option>
+                {staff.map((s) => (
+                  <option key={s.id} value={s.id}>{s.full_name} ({s.role})</option>
+                ))}
+              </select>
+              <input className={vahaInputClass} value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })} placeholder="Role" required aria-label="Role" />
+              <input type="datetime-local" className={vahaInputClass} value={form.start_time?.slice(0, 16)} onChange={(e) => setForm({ ...form, start_time: new Date(e.target.value).toISOString() })} required aria-label="Start time" />
+              <input type="datetime-local" className={vahaInputClass} value={form.end_time?.slice(0, 16)} onChange={(e) => setForm({ ...form, end_time: new Date(e.target.value).toISOString() })} required aria-label="End time" />
+              <select className={vahaInputClass} value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value as SavannahShift['status'] })} aria-label="Status">
+                <option value="scheduled">Scheduled</option>
+                <option value="completed">Completed</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+              <div className="flex gap-2">
+                <VahaButton type="submit" variant="solid" disabled={saving} className="flex-1">
+                  {saving ? 'Saving…' : form.id ? 'Update' : 'Schedule'}
+                </VahaButton>
+                {form.id ? (
+                  <VahaButton type="button" variant="outline" onClick={() => setForm({ user_id: '', role: 'Server', start_time: '', end_time: '', status: 'scheduled' })}>
                     Cancel
-                  </button>
-                )}
+                  </VahaButton>
+                ) : null}
               </div>
             </form>
-          </section>
+          </VahaPanel>
 
-          <section className="rounded-2xl border border-luxury-accent/20 bg-black/60 p-6 shadow-xl">
-            <h2 className="mb-6 text-xl font-serif font-bold text-luxury-accent">Upcoming Shifts</h2>
+          <VahaPanel title="Upcoming Shifts">
             {loading ? (
-              <p className="text-white/50">Loading shifts...</p>
+              <p className="mt-4 text-vaha-muted">Loading…</p>
             ) : shifts.length === 0 ? (
-              <p className="text-white/50">No shifts scheduled.</p>
+              <p className="mt-4 text-vaha-muted">No shifts scheduled.</p>
             ) : (
-              <div className="overflow-x-auto">
+              <div className="mt-4 overflow-x-auto">
                 <table className="w-full text-left text-sm">
                   <thead>
-                    <tr className="border-b border-white/10 text-white/50">
-                      <th className="pb-4 pr-4">Staff</th>
-                      <th className="pb-4 pr-4">Role</th>
-                      <th className="pb-4 pr-4">Timing</th>
-                      <th className="pb-4 pr-4">Status</th>
-                      <th className="pb-4 text-right">Actions</th>
+                    <tr className="border-b border-white/10 text-xs uppercase tracking-widest text-vaha-muted">
+                      <th className="pb-3 pr-3">Staff</th>
+                      <th className="pb-3 pr-3">Role</th>
+                      <th className="pb-3 pr-3">Timing</th>
+                      <th className="pb-3 pr-3">Status</th>
+                      <th className="pb-3 text-right">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/5">
-                    {shifts.map(shift => (
-                      <tr key={shift.id} className="group hover:bg-white/5">
-                        <td className="py-4 pr-4 font-bold">{shift.full_name}</td>
-                        <td className="py-4 pr-4 text-white/70">{shift.role}</td>
-                        <td className="py-4 pr-4 text-xs">
-                          <div className="text-white">{new Date(shift.start_time).toLocaleString()}</div>
-                          <div className="text-white/50">to {new Date(shift.end_time).toLocaleString()}</div>
+                    {shifts.map((shift) => (
+                      <tr key={shift.id}>
+                        <td className="py-3 pr-3 font-semibold">{shift.full_name}</td>
+                        <td className="py-3 pr-3 text-vaha-muted">{shift.role}</td>
+                        <td className="py-3 pr-3 text-xs">
+                          <div>{new Date(shift.start_time).toLocaleString()}</div>
+                          <div className="text-vaha-muted">to {new Date(shift.end_time).toLocaleString()}</div>
                         </td>
-                        <td className="py-4 pr-4 uppercase tracking-tighter">
-                          <span className={`rounded-full px-2 py-1 text-[10px] font-bold ${
-                            shift.status === 'completed' ? 'bg-green-900/40 text-green-400' :
-                            shift.status === 'cancelled' ? 'bg-red-900/40 text-red-400' :
-                            'bg-blue-900/40 text-blue-400'
-                          }`}>
-                            {shift.status}
-                          </span>
-                        </td>
-                        <td className="py-4 text-right">
-                          <div className="flex justify-end gap-2">
-                            <button 
-                              onClick={() => setForm(shift)}
-                              className="text-luxury-accent hover:underline"
-                            >
-                              Edit
-                            </button>
-                            {profile?.role === 'admin' && (
-                              <button 
-                                onClick={() => handleDelete(shift.id)}
-                                className="text-red-400 hover:underline"
-                              >
-                                Delete
-                              </button>
-                            )}
-                          </div>
+                        <td className="py-3 pr-3 text-[10px] uppercase tracking-widest">{shift.status}</td>
+                        <td className="py-3 text-right">
+                          <button type="button" onClick={() => setForm(shift)} className="mr-3 text-vaha-gold hover:underline">Edit</button>
+                          {profile?.role === 'admin' ? (
+                            <button type="button" onClick={() => handleDelete(shift.id)} className="text-red-400 hover:underline">Delete</button>
+                          ) : null}
                         </td>
                       </tr>
                     ))}
@@ -275,9 +191,9 @@ export default function ShiftsPage() {
                 </table>
               </div>
             )}
-          </section>
+          </VahaPanel>
         </div>
       </div>
-    </main>
+    </StaffShell>
   );
 }

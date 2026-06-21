@@ -38,21 +38,21 @@ export default function MenuImageUpload({ imageUrl, imageUrl2, onChange, disable
   }
 
   return (
-    <fieldset className="rounded-lg border border-luxury-accent/25 bg-black/30 p-4" aria-labelledby={labelId}>
-      <legend id={labelId} className="px-1 text-sm font-semibold text-white/80">
-        Item photos <span className="text-luxury-accent">({uploaded}/2 uploaded)</span>
+    <fieldset className="border border-white/10 bg-vaha-ink p-4" aria-labelledby={labelId}>
+      <legend id={labelId} className="px-1 text-sm font-semibold text-vaha-cream">
+        Item photos <span className="text-vaha-gold">({uploaded}/2 uploaded)</span>
       </legend>
-      <p className="mt-1 text-xs text-white/65">At least 1 image is required. You may add up to 2.</p>
+      <p className="mt-1 text-xs text-vaha-muted">At least 1 image is required. You may add up to 2.</p>
 
       <div className="mt-4 grid gap-4 sm:grid-cols-2">
         {([
           { slot: 1 as const, url: imageUrl, ref: slot1Ref, label: 'Primary photo' },
           { slot: 2 as const, url: imageUrl2, ref: slot2Ref, label: 'Secondary photo (optional)' },
         ]).map(({ slot, url, ref, label }) => (
-          <div key={slot} className="rounded-lg border border-white/10 bg-black/40 p-3">
-            <p className="text-xs font-semibold uppercase tracking-wide text-white/70">{label}</p>
+          <div key={slot} className="border border-white/10 bg-vaha-ink-soft p-3">
+            <p className="text-xs font-semibold uppercase tracking-wide text-vaha-muted">{label}</p>
             {url ? (
-              <div className="relative mt-2 aspect-[4/3] overflow-hidden rounded-md border border-luxury-accent/20">
+              <div className="relative mt-2 aspect-[4/3] overflow-hidden border border-vaha-gold/20">
                 <Image src={url} alt="" fill className="object-cover" sizes="200px" unoptimized={url.startsWith('http')} />
               </div>
             ) : (
@@ -65,7 +65,7 @@ export default function MenuImageUpload({ imageUrl, imageUrl2, onChange, disable
                 type="button"
                 disabled={disabled || uploadingSlot !== 0}
                 onClick={() => ref.current?.click()}
-                className="rounded-full border border-luxury-accent/50 px-3 py-1.5 text-xs font-semibold text-luxury-accent hover:bg-luxury-accent hover:text-black disabled:opacity-50"
+                className="border border-vaha-gold/50 px-3 py-1.5 text-xs font-semibold uppercase tracking-widest text-vaha-gold hover:bg-vaha-gold hover:text-vaha-ink disabled:opacity-50"
               >
                 {uploadingSlot === slot ? 'Uploading…' : url ? 'Replace' : 'Upload'}
               </button>

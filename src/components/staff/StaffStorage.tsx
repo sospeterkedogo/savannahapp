@@ -34,8 +34,8 @@ export function StaffStorage() {
     <div className="space-y-8">
       {/* Reference Library Section */}
       {!currentFolderId && (
-        <div className="rounded-2xl border border-luxury-accent/25 bg-black/60 p-6 shadow-xl">
-          <h2 className="text-xl font-serif font-bold text-luxury-accent mb-6 flex items-center gap-3">
+        <div className="rounded-2xl border border-vaha-gold/25 bg-vaha-ink-soft p-6 shadow-xl">
+          <h2 className="text-xl font-serif font-bold text-vaha-gold mb-6 flex items-center gap-3">
             <FaBook /> Reference Library
           </h2>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
@@ -44,11 +44,11 @@ export function StaffStorage() {
                 key={file.id}
                 href={file.path}
                 download={file.name}
-                className="group relative flex flex-col items-center justify-center rounded-xl border border-luxury-accent/10 bg-luxury-accent/5 p-4 hover:border-luxury-accent transition-all cursor-pointer"
+                className="group relative flex flex-col items-center justify-center rounded-xl border border-vaha-gold/10 bg-vaha-gold/5 p-4 hover:border-vaha-gold transition-all cursor-pointer"
               >
-                <FaFile className="mb-2 text-4xl text-luxury-accent/60 group-hover:text-luxury-accent" />
+                <FaFile className="mb-2 text-4xl text-vaha-gold/60 group-hover:text-vaha-gold" />
                 <span className="text-xs font-bold text-white/90 text-center uppercase tracking-tighter">{file.name}</span>
-                <FaDownload className="absolute top-2 right-2 text-luxury-accent/40 opacity-0 group-hover:opacity-100 transition-opacity" size={12} />
+                <FaDownload className="absolute top-2 right-2 text-vaha-gold/40 opacity-0 group-hover:opacity-100 transition-opacity" size={12} />
               </a>
             ))}
           </div>
@@ -56,29 +56,29 @@ export function StaffStorage() {
       )}
 
       {/* Personal Storage Section */}
-      <div className="rounded-2xl border border-luxury-accent/25 bg-black/60 p-6 shadow-xl">
+      <div className="rounded-2xl border border-vaha-gold/25 bg-vaha-ink-soft p-6 shadow-xl">
         <div className="mb-6 flex items-center justify-between">
           <div className="flex items-center gap-4">
             {currentFolderId && (
               <button
                 onClick={() => setCurrentFolderId(currentFolder?.parent_id || null)}
-                className="text-luxury-accent hover:text-white"
+                className="text-vaha-gold hover:text-white"
               >
                 <FaChevronLeft />
               </button>
             )}
-            <h2 className="text-2xl font-serif font-bold text-luxury-accent">
+            <h2 className="text-2xl font-serif font-bold text-vaha-gold">
               {currentFolder ? currentFolder.name : 'My Files'}
             </h2>
           </div>
           <div className="flex gap-2">
             <button
               onClick={() => setIsCreatingFolder(true)}
-              className="flex items-center gap-2 rounded-lg bg-luxury-accent/10 px-3 py-1 text-sm font-bold text-luxury-accent hover:bg-luxury-accent hover:text-black transition-colors"
+              className="flex items-center gap-2 rounded-lg bg-vaha-gold/10 px-3 py-1 text-sm font-bold text-vaha-gold hover:bg-vaha-gold hover:text-black transition-colors"
             >
               <FaPlus /> Folder
             </button>
-            <label className="flex cursor-pointer items-center gap-2 rounded-lg bg-luxury-accent px-3 py-1 text-sm font-bold text-black hover:bg-white transition-colors">
+            <label className="flex cursor-pointer items-center gap-2 rounded-lg bg-vaha-gold px-3 py-1 text-sm font-bold text-black hover:bg-white transition-colors">
               <FaUpload /> Upload
               <input type="file" className="hidden" onChange={handleUpload} />
             </label>
@@ -92,11 +92,11 @@ export function StaffStorage() {
               value={newFolderName}
               onChange={(e) => setNewFolderName(e.target.value)}
               placeholder="Folder name"
-              className="flex-1 rounded-lg border border-luxury-accent/30 bg-black/40 px-3 py-1 text-white outline-none focus:border-luxury-accent"
+              className="flex-1 rounded-lg border border-vaha-gold/30 bg-black/40 px-3 py-1 text-white outline-none focus:border-vaha-gold"
             />
             <button
               onClick={handleCreateFolder}
-              className="rounded-lg bg-luxury-accent px-4 py-1 text-sm font-bold text-black"
+              className="rounded-lg bg-vaha-gold px-4 py-1 text-sm font-bold text-black"
             >
               Create
             </button>
@@ -113,10 +113,10 @@ export function StaffStorage() {
           {currentFolders.map(folder => (
             <div
               key={folder.id}
-              className="group relative flex flex-col items-center justify-center rounded-xl border border-white/5 bg-white/5 p-4 hover:border-luxury-accent/30 transition-all cursor-pointer"
+              className="group relative flex flex-col items-center justify-center rounded-xl border border-white/5 bg-white/5 p-4 hover:border-vaha-gold/30 transition-all cursor-pointer"
               onClick={() => setCurrentFolderId(folder.id)}
             >
-              <FaFolder className="mb-2 text-4xl text-luxury-accent" />
+              <FaFolder className="mb-2 text-4xl text-vaha-gold" />
               <span className="text-sm text-white/90 text-center truncate w-full">{folder.name}</span>
               <button
                 onClick={(e) => { e.stopPropagation(); deleteFolder(folder.id); }}
@@ -129,7 +129,7 @@ export function StaffStorage() {
           {currentFiles.map(file => (
             <div
               key={file.id}
-              className="group relative flex flex-col items-center justify-center rounded-xl border border-white/5 bg-white/5 p-4 hover:border-luxury-accent/30 transition-all"
+              className="group relative flex flex-col items-center justify-center rounded-xl border border-white/5 bg-white/5 p-4 hover:border-vaha-gold/30 transition-all"
             >
               <FaFile className="mb-2 text-4xl text-white/40" />
               <span className="text-sm text-white/90 text-center truncate w-full">{file.name}</span>

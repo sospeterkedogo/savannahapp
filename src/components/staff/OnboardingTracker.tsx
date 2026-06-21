@@ -1,59 +1,47 @@
-import React from 'react';
 import { useOnboarding } from '../../lib/useOnboarding';
 import { FaCircleCheck, FaCircle, FaArrowRight } from 'react-icons/fa6';
 
 export function OnboardingTracker() {
   const { tasks, loading, completeTask } = useOnboarding();
 
-  if (loading) return <div className="text-white/70">Loading onboarding...</div>;
+  if (loading) return <p className="text-vaha-muted">Loading onboarding…</p>;
   if (tasks.length === 0) return null;
 
-  const completedCount = tasks.filter(t => !!t.completed_at).length;
+  const completedCount = tasks.filter((t) => !!t.completed_at).length;
   const progress = (completedCount / tasks.length) * 100;
 
   return (
-    <div className="rounded-2xl border border-luxury-accent/25 bg-black/60 p-6 shadow-xl">
-      <div className="mb-6">
-        <h2 className="text-2xl font-serif font-bold text-luxury-accent">Onboarding Tasks</h2>
-        <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-white/10">
-          <div
-            className="h-full bg-luxury-accent transition-all duration-500"
-            style={{ width: `${progress}%` }}
-          />
+    <div>
+      <div className="mb-4">
+        <h2 className="font-serif text-xl text-vaha-cream">Onboarding Tasks</h2>
+        <div className="mt-3 h-1.5 w-full overflow-hidden bg-white/10">
+          <div className="h-full bg-vaha-gold transition-all duration-500" style={{ width: `${progress}%` }} />
         </div>
-        <p className="mt-2 text-sm text-white/50">{completedCount} of {tasks.length} tasks completed</p>
+        <p className="mt-2 text-xs text-vaha-muted">{completedCount} of {tasks.length} completed</p>
       </div>
 
-      <div className="space-y-4">
-        {tasks.map(task => (
+      <div className="space-y-2">
+        {tasks.map((task) => (
           <div
             key={task.id}
-            className={`flex items-start gap-4 rounded-xl border border-white/5 p-4 transition-all ${
-              task.completed_at ? 'bg-luxury-accent/5' : 'bg-white/5 hover:border-luxury-accent/20'
-            }`}
+            className={`flex items-start gap-3 border border-white/10 p-3 ${task.completed_at ? 'bg-vaha-gold/5' : 'hover:border-vaha-gold/30'}`}
           >
             <button
+              type="button"
               onClick={() => !task.completed_at && completeTask(task.id)}
-              className={`mt-1 text-xl transition-colors ${
-                task.completed_at ? 'text-luxury-accent' : 'text-white/20 hover:text-luxury-accent'
-              }`}
+              className={`mt-0.5 text-lg ${task.completed_at ? 'text-vaha-gold' : 'text-vaha-muted hover:text-vaha-gold'}`}
             >
               {task.completed_at ? <FaCircleCheck /> : <FaCircle />}
             </button>
             <div className="flex-1">
-              <h3 className={`font-bold ${task.completed_at ? 'text-white/50' : 'text-white'}`}>
-                {task.title}
-              </h3>
-              <p className="text-sm text-white/50">{task.description}</p>
+              <h3 className={`text-sm font-semibold ${task.completed_at ? 'text-vaha-muted line-through' : ''}`}>{task.title}</h3>
+              <p className="text-xs text-vaha-muted">{task.description}</p>
             </div>
-            {!task.completed_at && (
-              <button
-                onClick={() => completeTask(task.id)}
-                className="text-luxury-accent hover:text-white"
-              >
+            {!task.completed_at ? (
+              <button type="button" onClick={() => completeTask(task.id)} className="text-vaha-gold hover:text-vaha-cream">
                 <FaArrowRight />
               </button>
-            )}
+            ) : null}
           </div>
         ))}
       </div>
