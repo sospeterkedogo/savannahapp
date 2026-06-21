@@ -1,8 +1,8 @@
+import Image from 'next/image';
 import {
   VahaCta,
   VahaFeatureGrid,
   VahaPageShell,
-  VahaReliableImage,
   VahaSplitSection,
   VahaStoryBlock,
 } from '../components/vaha/VahaUI';
@@ -21,12 +21,12 @@ export default function Home() {
   return (
     <VahaPageShell>
       <section className="relative flex min-h-screen flex-col justify-end overflow-hidden">
-        <VahaReliableImage
+        <Image
           src={LANDING_IMAGES[0]}
           alt="Inside Savannah Bar and Grill"
           fill
           priority
-          className="brightness-[0.4]"
+          className="object-cover brightness-[0.4]"
           sizes="100vw"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-vaha-ink via-vaha-ink/40 to-transparent" aria-hidden="true" />
@@ -130,8 +130,15 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="vaha-section relative overflow-hidden text-center">
-        <VahaReliableImage src={LANDING_IMAGES[0]} alt="" fill className="brightness-[0.2]" sizes="100vw" />
+      <section className="vaha-section relative min-h-[320px] overflow-hidden text-center">
+        <Image
+          src={LANDING_IMAGES[0]}
+          alt=""
+          fill
+          loading="lazy"
+          className="object-cover brightness-[0.2]"
+          sizes="100vw"
+        />
         <div className="absolute inset-0 bg-vaha-ink/70" aria-hidden="true" />
         <div className="vaha-container relative z-10">
           <h2 className="vaha-title mb-6">Visit Tonight</h2>

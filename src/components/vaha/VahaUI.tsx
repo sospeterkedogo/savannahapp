@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useState, type ReactNode } from 'react';
+import { type ReactNode } from 'react';
 
 /** Split headline: small caps eyebrow + large display title (Vaha pattern). */
 export function VahaHeadline({
@@ -85,7 +85,7 @@ export function VahaSplitSection({
     <section className="vaha-section bg-vaha-ink-soft">
       <div className={`vaha-container grid items-center gap-6 lg:grid-cols-2 lg:gap-8 ${reverse ? 'lg:[&>*:first-child]:order-2' : ''}`}>
         <div className="relative aspect-[4/5] overflow-hidden border border-white/10">
-          <VahaReliableImage src={imageSrc} alt={imageAlt} fill sizes="(max-width: 1024px) 100vw, 50vw" />
+          <Image src={imageSrc} alt={imageAlt} fill className="object-cover" sizes="(max-width: 1024px) 100vw, 50vw" loading="lazy" />
           <div className="absolute inset-0 bg-gradient-to-t from-vaha-ink/50 to-transparent" aria-hidden="true" />
         </div>
         <div className="space-y-5">
@@ -113,7 +113,14 @@ export function VahaFeatureGrid({
           {items.map((item) => (
             <article key={item.label} className="group border border-white/10 bg-vaha-ink-soft p-4 md:p-5">
               <div className="relative mb-6 aspect-[16/10] overflow-hidden">
-                <VahaReliableImage src={item.image} alt="" fill sizes="(max-width: 768px) 100vw, 50vw" className="transition-transform duration-700 group-hover:scale-105" />
+                <Image
+                  src={item.image}
+                  alt=""
+                  fill
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  loading="lazy"
+                />
               </div>
               <p className="vaha-eyebrow">{item.label}</p>
               <h3 className="mt-2 font-serif text-2xl text-vaha-cream md:text-3xl">{item.title}</h3>
@@ -234,49 +241,6 @@ export function VahaLoading({ label = 'Loading…' }: { label?: string }) {
       <p className="vaha-eyebrow" role="status" aria-live="polite">
         {label}
       </p>
-    </div>
-  );
-}
-
-/** Landing / hero image with load validation and fresh mount per navigation */
-export function VahaReliableImage({
-  src,
-  alt,
-  fill,
-  priority,
-  className = '',
-  sizes,
-  aspectClassName,
-}: {
-  src: string;
-  alt: string;
-  fill?: boolean;
-  priority?: boolean;
-  className?: string;
-  sizes?: string;
-  aspectClassName?: string;
-}) {
-  const [status, setStatus] = useState<'loading' | 'loaded' | 'error'>('loading');
-
-  return (
-    <div className={aspectClassName || (fill ? 'absolute inset-0' : 'relative aspect-[16/10] w-full')}>
-      {status === 'error' ? (
-        <div className="flex h-full min-h-[12rem] items-center justify-center border border-red-400/30 bg-vaha-ink-soft p-4 text-center text-sm text-red-200">
-          Image unavailable: {src}
-        </div>
-      ) : (
-        <Image
-          key={src}
-          src={src}
-          alt={alt}
-          fill={fill}
-          priority={priority}
-          sizes={sizes}
-          className={`object-cover ${className} ${status === 'loading' ? 'opacity-0' : 'opacity-100'} transition-opacity duration-500`}
-          onLoad={() => setStatus('loaded')}
-          onError={() => setStatus('error')}
-        />
-      )}
     </div>
   );
 }
